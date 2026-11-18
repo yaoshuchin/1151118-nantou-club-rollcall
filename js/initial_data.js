@@ -45,6 +45,8 @@
           "name": "陳虹妤",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -80,6 +82,8 @@
           "name": "蔣宜芮",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -115,6 +119,8 @@
           "name": "朱楷炘",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -150,6 +156,8 @@
           "name": "張宇呈",
           "gender": "男",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -185,6 +193,8 @@
           "name": "陳俊雄",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -220,6 +230,8 @@
           "name": "温凱翔",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -255,6 +267,8 @@
           "name": "廖羿閎",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -290,6 +304,8 @@
           "name": "魏苡洆",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -325,6 +341,8 @@
           "name": "胡宜容",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -360,6 +378,8 @@
           "name": "張庭瑜",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -395,6 +415,8 @@
           "name": "温紫稘",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -430,6 +452,8 @@
           "name": "張豈銜",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -465,6 +489,8 @@
           "name": "黃楀荀",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -500,6 +526,8 @@
           "name": "高渼晴",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -535,6 +563,8 @@
           "name": "呂宥橗",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -570,6 +600,8 @@
           "name": "陳意蟬",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -605,6 +637,8 @@
           "name": "林昀龍",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -640,6 +674,8 @@
           "name": "劉宇程",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -675,6 +711,8 @@
           "name": "王聖元",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -710,6 +748,8 @@
           "name": "温珮岑",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -745,6 +785,8 @@
           "name": "詹雨璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -780,6 +822,8 @@
           "name": "趙姵臻",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -815,6 +859,8 @@
           "name": "鄭詩蓉",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -850,6 +896,8 @@
           "name": "余承叡",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -885,6 +933,8 @@
           "name": "林廷彥",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -920,6 +970,8 @@
           "name": "唐魁酉",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -996,6 +1048,8 @@
           "name": "藍禹晴",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1031,6 +1085,8 @@
           "name": "吳冠宏",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1066,6 +1122,8 @@
           "name": "李秉祥",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1101,6 +1159,8 @@
           "name": "林彥斌",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1136,6 +1196,8 @@
           "name": "許仲維",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1171,6 +1233,8 @@
           "name": "黃儷綸",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1206,6 +1270,8 @@
           "name": "金宥妘",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1241,6 +1307,8 @@
           "name": "李沛恩",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1276,6 +1344,8 @@
           "name": "簡子涵",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1311,6 +1381,8 @@
           "name": "林鴻均",
           "gender": "男",
           "role": "副社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1346,6 +1418,8 @@
           "name": "黃子恩",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1381,6 +1455,8 @@
           "name": "謝政諺",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1452,6 +1528,8 @@
           "name": "吳詩晴",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1487,6 +1565,8 @@
           "name": "林千耘",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1522,6 +1602,8 @@
           "name": "戴晨芯",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1557,6 +1639,8 @@
           "name": "謝亦琁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1592,6 +1676,8 @@
           "name": "王繻杉",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1627,6 +1713,8 @@
           "name": "賴宥蓁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1662,6 +1750,8 @@
           "name": "簡荃蓁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1697,6 +1787,8 @@
           "name": "吳紫僑",
           "gender": "女",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1732,6 +1824,8 @@
           "name": "林筠軒",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1767,6 +1861,8 @@
           "name": "林岍蓁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1802,6 +1898,8 @@
           "name": "曾姜綺",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1837,6 +1935,8 @@
           "name": "楊于嫺",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1872,6 +1972,8 @@
           "name": "楊芯羽",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1907,6 +2009,8 @@
           "name": "廖宜璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1942,6 +2046,8 @@
           "name": "鄭如彣",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -1977,6 +2083,8 @@
           "name": "鄭雅蓁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2012,6 +2120,8 @@
           "name": "吳玥婷",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2047,6 +2157,8 @@
           "name": "張家綺",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2082,6 +2194,8 @@
           "name": "彭梓晏",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2117,6 +2231,8 @@
           "name": "曾育綾",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2182,6 +2298,8 @@
           "name": "陳亮蓁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2217,6 +2335,8 @@
           "name": "吳寶依",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2252,6 +2372,8 @@
           "name": "徐勝愷",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2287,6 +2409,8 @@
           "name": "曾楷睿",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2322,6 +2446,8 @@
           "name": "林宥吟",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2357,6 +2483,8 @@
           "name": "莊芷綺",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2392,6 +2520,8 @@
           "name": "郭育妍",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2427,6 +2557,8 @@
           "name": "郭育妤",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2462,6 +2594,8 @@
           "name": "陳語瞳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2497,6 +2631,8 @@
           "name": "王于豪",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2532,6 +2668,8 @@
           "name": "余明曄",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2567,6 +2705,8 @@
           "name": "陳彥及",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2602,6 +2742,8 @@
           "name": "程辰凱",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2637,6 +2779,8 @@
           "name": "陳子揚",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2672,6 +2816,8 @@
           "name": "羅章睿",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2707,6 +2853,8 @@
           "name": "胡芷瑜",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2742,6 +2890,8 @@
           "name": "潘芮儀",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2777,6 +2927,8 @@
           "name": "王梓寧",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2812,6 +2964,8 @@
           "name": "吳士朋",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2847,6 +3001,8 @@
           "name": "呂冠緯",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2882,6 +3038,8 @@
           "name": "張允睿",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2958,6 +3116,8 @@
           "name": "江姝婷",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -2993,6 +3153,8 @@
           "name": "林育嫻",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3028,6 +3190,8 @@
           "name": "林頁言",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3063,6 +3227,8 @@
           "name": "胡芯語",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3098,6 +3264,8 @@
           "name": "徐筱喬",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3133,6 +3301,8 @@
           "name": "陳綵翎",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3168,6 +3338,8 @@
           "name": "曾苡晴",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3203,6 +3375,8 @@
           "name": "劉芷含",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3238,6 +3412,8 @@
           "name": "藍思詒",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3273,6 +3449,8 @@
           "name": "許宸瑋",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3308,6 +3486,8 @@
           "name": "郭音琪",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3343,6 +3523,8 @@
           "name": "黃艾薇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3378,6 +3560,8 @@
           "name": "吳欣蓉",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3413,6 +3597,8 @@
           "name": "徐若瑄",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3448,6 +3634,8 @@
           "name": "陳羿緁",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3483,6 +3671,8 @@
           "name": "李佳成",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3518,6 +3708,8 @@
           "name": "周宥立",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3553,6 +3745,8 @@
           "name": "洪玉琳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3588,6 +3782,8 @@
           "name": "張容瑄",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3623,31 +3819,33 @@
           "name": "陳紅妘",
           "gender": "女",
           "role": "",
+          "isGifted": true,
+          "specialTag": "資優生(第7節免出席)",
           "attendance": {
             "2026-10-06": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-10-13": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-10-20": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-10-27": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-11-03": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             }
           }
         },
@@ -3658,6 +3856,8 @@
           "name": "張詠瑄",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3693,6 +3893,8 @@
           "name": "陳羽瑄",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3728,6 +3930,8 @@
           "name": "陳怡瑄",
           "gender": "女",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3763,6 +3967,8 @@
           "name": "陳芷溦",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3798,6 +4004,8 @@
           "name": "楊景蓉",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3833,6 +4041,8 @@
           "name": "蔡幸萍",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3868,6 +4078,8 @@
           "name": "廖豈芳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3939,6 +4151,8 @@
           "name": "魏語希",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -3974,6 +4188,8 @@
           "name": "羅友呈",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4009,6 +4225,8 @@
           "name": "黎仲哲",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4044,6 +4262,8 @@
           "name": "林雨霏",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4079,6 +4299,8 @@
           "name": "胡詠薰",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4114,6 +4336,8 @@
           "name": "張苡桔",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4149,6 +4373,8 @@
           "name": "黃馨蒂",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4184,6 +4410,8 @@
           "name": "楊竣翔",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4219,6 +4447,8 @@
           "name": "劉軒宇",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4254,6 +4484,8 @@
           "name": "何金玲",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4289,6 +4521,8 @@
           "name": "陳姵寧",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4324,6 +4558,8 @@
           "name": "陳姿羽",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4359,6 +4595,8 @@
           "name": "劉恩彤",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4394,6 +4632,8 @@
           "name": "潘芝汝",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4429,6 +4669,8 @@
           "name": "鄭絜云",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4464,6 +4706,8 @@
           "name": "許泳煜",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4499,6 +4743,8 @@
           "name": "沈芳愉",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4534,6 +4780,8 @@
           "name": "王語涵",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4569,6 +4817,8 @@
           "name": "洪妤瑄",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4604,6 +4854,8 @@
           "name": "張艷婷",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4639,6 +4891,8 @@
           "name": "劉芷硯",
           "gender": "女",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4674,6 +4928,8 @@
           "name": "廖峻宇",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4709,6 +4965,8 @@
           "name": "林昱岑",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4744,6 +5002,8 @@
           "name": "吳宸鋒",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4779,6 +5039,8 @@
           "name": "張銨倢",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4814,6 +5076,8 @@
           "name": "簡宏宇",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4849,6 +5113,8 @@
           "name": "陳樂庭",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4930,6 +5196,8 @@
           "name": "李品璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -4965,6 +5233,8 @@
           "name": "吳駿岷",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5000,6 +5270,8 @@
           "name": "谷詠恩",
           "gender": "男",
           "role": "副社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5035,6 +5307,8 @@
           "name": "張竤鈞",
           "gender": "男",
           "role": "幹部",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5070,6 +5344,8 @@
           "name": "張群偉",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5105,6 +5381,8 @@
           "name": "陳翊宸",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5140,31 +5418,33 @@
           "name": "陳揚宗",
           "gender": "男",
           "role": "",
+          "isGifted": true,
+          "specialTag": "資優生(第7節免出席)",
           "attendance": {
             "2026-10-06": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-10-13": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-10-20": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-10-27": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             },
             "2026-11-03": {
-              "p7": "O",
+              "p7": "免",
               "p8": "O",
-              "note": ""
+              "note": "資優鑑定生不用上第7節，不用出席"
             }
           }
         },
@@ -5175,6 +5455,8 @@
           "name": "賴柏豪",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5210,6 +5492,8 @@
           "name": "李聿甯",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5245,6 +5529,8 @@
           "name": "李芮妮",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5280,6 +5566,8 @@
           "name": "陳玟陵",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5315,6 +5603,8 @@
           "name": "賴翊其",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5350,6 +5640,8 @@
           "name": "簡觀懿",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5385,6 +5677,8 @@
           "name": "鐘云彤",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5420,6 +5714,8 @@
           "name": "王妍芝",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5455,6 +5751,8 @@
           "name": "余妍彤",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5490,6 +5788,8 @@
           "name": "邱炘慈",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5525,6 +5825,8 @@
           "name": "彭翊菲",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5560,6 +5862,8 @@
           "name": "謝雨璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5595,6 +5899,8 @@
           "name": "許翃綸",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5630,6 +5936,8 @@
           "name": "陳宥喆",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5665,6 +5973,8 @@
           "name": "陳宥熙",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5700,6 +6010,8 @@
           "name": "陳學承",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5735,6 +6047,8 @@
           "name": "廖宥誠",
           "gender": "男",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5770,6 +6084,8 @@
           "name": "張亦晴",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5805,6 +6121,8 @@
           "name": "簡傳璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5840,6 +6158,8 @@
           "name": "李丞閎",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5875,6 +6195,8 @@
           "name": "許富翔",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5910,6 +6232,8 @@
           "name": "陳律光",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5945,6 +6269,8 @@
           "name": "劉宇振",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -5980,6 +6306,8 @@
           "name": "黃羽薇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6015,6 +6343,8 @@
           "name": "張哲瑜",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6050,6 +6380,8 @@
           "name": "羅韋翔",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6085,6 +6417,8 @@
           "name": "嚴黃諭",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6156,6 +6490,8 @@
           "name": "林辰諼",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6191,6 +6527,8 @@
           "name": "湯凱丞",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6226,6 +6564,8 @@
           "name": "廖子昕",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6261,6 +6601,8 @@
           "name": "鄭綵琳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6296,6 +6638,8 @@
           "name": "張哲瑋",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6331,6 +6675,8 @@
           "name": "莊予靖",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6366,6 +6712,8 @@
           "name": "曾敏碩",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6401,6 +6749,8 @@
           "name": "黃士睿",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6436,6 +6786,8 @@
           "name": "廖梓惟",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6471,6 +6823,8 @@
           "name": "石榮芳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6506,6 +6860,8 @@
           "name": "吳予恩",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6541,6 +6897,8 @@
           "name": "陳永昕",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6576,6 +6934,8 @@
           "name": "簡子茜",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6611,6 +6971,8 @@
           "name": "石名峰",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6646,6 +7008,8 @@
           "name": "林伸澄",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6681,6 +7045,8 @@
           "name": "張俊帆",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6716,6 +7082,8 @@
           "name": "陳佑昇",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6751,6 +7119,8 @@
           "name": "蕭敏皓",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6786,6 +7156,8 @@
           "name": "魏渝承",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6821,6 +7193,8 @@
           "name": "吳子瑜",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6856,6 +7230,8 @@
           "name": "林亭如",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6891,6 +7267,8 @@
           "name": "陳雅雯",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6926,6 +7304,8 @@
           "name": "鄭芯妮",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6961,6 +7341,8 @@
           "name": "吳東駿",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -6996,6 +7378,8 @@
           "name": "林彥竹",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7031,6 +7415,8 @@
           "name": "林郁祐",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7066,6 +7452,8 @@
           "name": "廖冠宇",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7101,6 +7489,8 @@
           "name": "詹瑜彤",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7136,6 +7526,8 @@
           "name": "林祺勝",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7201,6 +7593,8 @@
           "name": "王婷于",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7236,6 +7630,8 @@
           "name": "石育誠",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7271,6 +7667,8 @@
           "name": "許榆昀",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7306,6 +7704,8 @@
           "name": "何苜維",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7341,6 +7741,8 @@
           "name": "簡詩虹",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7376,6 +7778,8 @@
           "name": "許冠廷",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7411,6 +7815,8 @@
           "name": "蕭佑偉",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7446,6 +7852,8 @@
           "name": "張靖楹",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7481,6 +7889,8 @@
           "name": "何孟瑋",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7516,6 +7926,8 @@
           "name": "賴麒伍",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7551,6 +7963,8 @@
           "name": "邱庭彥",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7586,6 +8000,8 @@
           "name": "陳致廷",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7621,6 +8037,8 @@
           "name": "葉品毅",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7656,6 +8074,8 @@
           "name": "簡伯宸",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7691,6 +8111,8 @@
           "name": "許晉嘉",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7726,6 +8148,8 @@
           "name": "陳倚天",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7761,6 +8185,8 @@
           "name": "陳訢瑜",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7796,6 +8222,8 @@
           "name": "蔡宇呈",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7831,6 +8259,8 @@
           "name": "羅凡茜",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7866,6 +8296,8 @@
           "name": "陳奕譔",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7901,6 +8333,8 @@
           "name": "郭品佑",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -7966,6 +8400,8 @@
           "name": "全薇甯",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8001,6 +8437,8 @@
           "name": "張紹揚",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8036,6 +8474,8 @@
           "name": "符為楷",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8071,6 +8511,8 @@
           "name": "許永葆",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8106,6 +8548,8 @@
           "name": "李建智",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8141,6 +8585,8 @@
           "name": "吳宇威",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8176,6 +8622,8 @@
           "name": "林彤諾",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8211,6 +8659,8 @@
           "name": "林竣誼",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8246,6 +8696,8 @@
           "name": "徐楷哲",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8281,6 +8733,8 @@
           "name": "廖冠昱",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8316,6 +8770,8 @@
           "name": "黃政瑋",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8351,6 +8807,8 @@
           "name": "陳詩涵",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8386,6 +8844,8 @@
           "name": "賴姿璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8421,6 +8881,8 @@
           "name": "林羿禎",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8456,6 +8918,8 @@
           "name": "施雨萱",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8491,6 +8955,8 @@
           "name": "謝嘉芳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8526,6 +8992,8 @@
           "name": "劉芷硯",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8561,6 +9029,8 @@
           "name": "蔡詠晴",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8632,6 +9102,8 @@
           "name": "林妍熹",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8667,6 +9139,8 @@
           "name": "簡岑芳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8702,6 +9176,8 @@
           "name": "易成洁",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8737,6 +9213,8 @@
           "name": "張芸瑄",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8772,6 +9250,8 @@
           "name": "陳彥綺",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8807,6 +9287,8 @@
           "name": "林以絜",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8842,6 +9324,8 @@
           "name": "張瑀希",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8877,6 +9361,8 @@
           "name": "石宜芳",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8912,6 +9398,8 @@
           "name": "盧予婷",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8947,6 +9435,8 @@
           "name": "李雯軒",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -8982,6 +9472,8 @@
           "name": "廖梓甯",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9017,6 +9509,8 @@
           "name": "余宥婷",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9052,6 +9546,8 @@
           "name": "邱晏姿",
           "gender": "女",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9087,6 +9583,8 @@
           "name": "賴依伶",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9158,6 +9656,8 @@
           "name": "曹祥珉",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9193,6 +9693,8 @@
           "name": "彭奕菲",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9228,6 +9730,8 @@
           "name": "彭交璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9263,6 +9767,8 @@
           "name": "張以寗",
           "gender": "女",
           "role": "社長",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9298,6 +9804,8 @@
           "name": "李泓逸",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-10-06": {
               "p7": "O",
@@ -9363,6 +9871,8 @@
           "name": "曹祥珉",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-09-01": {
               "p7": "O",
@@ -9398,6 +9908,8 @@
           "name": "彭奕菲",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-09-01": {
               "p7": "O",
@@ -9433,6 +9945,8 @@
           "name": "彭奕璇",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-09-01": {
               "p7": "O",
@@ -9468,6 +9982,8 @@
           "name": "張以寗",
           "gender": "女",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-09-01": {
               "p7": "O",
@@ -9503,6 +10019,8 @@
           "name": "李泓逸",
           "gender": "男",
           "role": "",
+          "isGifted": false,
+          "specialTag": "",
           "attendance": {
             "2026-09-01": {
               "p7": "O",

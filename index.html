@@ -352,11 +352,11 @@
             </div>
             <div class="flex items-baseline gap-2">
               <span class="text-2xl font-black text-emerald-700" id="stat-p7-present">0</span>
-              <span class="text-xs text-emerald-600">人實到</span>
+              <span class="text-xs text-emerald-600">人出席</span>
             </div>
             <div class="text-[11px] text-emerald-800 mt-0.5 flex gap-2">
               <span>缺席: <strong id="stat-p7-absent" class="text-rose-600">0</strong></span>
-              <span>請假: <strong id="stat-p7-leave" class="text-amber-600">0</strong></span>
+              <span>免到: <strong id="stat-p7-leave" class="text-purple-700 font-bold">0</strong></span>
             </div>
           </div>
 
@@ -368,11 +368,11 @@
             </div>
             <div class="flex items-baseline gap-2">
               <span class="text-2xl font-black text-blue-700" id="stat-p8-present">0</span>
-              <span class="text-xs text-blue-600">人實到</span>
+              <span class="text-xs text-blue-600">人出席</span>
             </div>
             <div class="text-[11px] text-blue-800 mt-0.5 flex gap-2">
               <span>缺席: <strong id="stat-p8-absent" class="text-rose-600">0</strong></span>
-              <span>請假: <strong id="stat-p8-leave" class="text-amber-600">0</strong></span>
+              <span class="text-slate-400">全員應到</span>
             </div>
           </div>
 
@@ -423,7 +423,7 @@
               <option value="ALL">全部學生名單</option>
               <option value="PRESENT">僅顯示出席 (O)</option>
               <option value="ABSENT">僅顯示缺席 (X)</option>
-              <option value="LEAVE">僅顯示請假 (事/病/公/喪)</option>
+              <option value="EXEMPT">僅看資優免到生 (免)</option>
             </select>
 
             <span id="filtered-count-badge" class="text-xs font-semibold text-slate-500">
@@ -470,15 +470,13 @@
         <!-- Table Legend Footer -->
         <div class="p-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-3">
-            <span class="font-bold text-slate-600">點名符號說明：</span>
+            <span class="font-bold text-slate-600">點名規則說明：</span>
             <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>O 出席</span>
-            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>X 缺席/曠課</span>
-            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>事 事假</span>
-            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>病 病假</span>
-            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>公 公假</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>X 缺席</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>免 免出席（201陳揚宗、204陳紅妘資優生不用上第7節）</span>
           </div>
           <div>
-            <span>💡 提示：點擊按鈕可直接循環變更狀態，離焦備註欄自動儲存。</span>
+            <span>💡 提示：點名分為「出席」與「缺席」，單鍵直接切換；資優生第7節免出席。</span>
           </div>
         </div>
       </section>
@@ -633,7 +631,7 @@
       </div>
 
       <div style="margin-top: 15px; font-size: 8.5pt; color: #555;">
-        ※ 備註：請指導教師於每週二第7-8節確實點名，出席記「O」，缺席曠課記「X」，請假註明「事/病/公/喪」。課後請幹部將點名單繳回學務處訓育組。
+        ※ 備註：點名分為出席「O」與缺席「X」；201班陳揚宗、204班陳紅妘為資優鑑定生，依校規不用上第7節，第7節註記免出席。課後請幹部將點名單繳回學務處訓育組。
       </div>
 
     </div>

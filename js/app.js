@@ -3,6 +3,8 @@
  * 核心應用程式邏輯 (app.js)
  * 密碼管制：nato
  * 活動時段：固定每週二 第7節與第8節
+ * 點名分類：出席 (O) 與 缺席 (X)
+ * 特殊註記：201陳揚宗、204陳紅妘 為資優鑑定生不用上第7節，第7節免出席
  */
 
 // ==========================================
@@ -10,18 +12,17 @@
 // ==========================================
 const AUTH_KEY = 'nantou_club_auth_token_115';
 const PASSWORD_CORRECT = 'nato';
-const STORAGE_KEY = 'nantou_clubs_database_115_v1';
+// 更新至 v2 確保自動載入最新資優生註記與二元點名模式
+const STORAGE_KEY = 'nantou_clubs_database_115_v2';
 
-// 狀態輪替順序
-const STATUS_CYCLE = ['O', 'X', '事', '病', '公', '喪', ''];
+// 點名分類：主要為出席與缺席，資優生第7節為免出席
+const STATUS_CYCLE_NORMAL = ['O', 'X'];
+const STATUS_CYCLE_GIFTED_P7 = ['免', 'O', 'X'];
 
 const STATUS_LABELS = {
-  'O': { text: '出席', bg: 'bg-emerald-100 text-emerald-800 border-emerald-300', icon: 'fa-check' },
-  'X': { text: '缺席', bg: 'bg-rose-100 text-rose-800 border-rose-300', icon: 'fa-xmark' },
-  '事': { text: '事假', bg: 'bg-amber-100 text-amber-800 border-amber-300', icon: 'fa-clock' },
-  '病': { text: '病假', bg: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: 'fa-bed' },
-  '公': { text: '公假', bg: 'bg-blue-100 text-blue-800 border-blue-300', icon: 'fa-briefcase' },
-  '喪': { text: '喪假', bg: 'bg-slate-200 text-slate-700 border-slate-300', icon: 'fa-ribbon' },
+  'O': { text: '出席', bg: 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200', icon: 'fa-check' },
+  'X': { text: '缺席', bg: 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200', icon: 'fa-xmark' },
+  '免': { text: '免出席', bg: 'bg-purple-100 text-purple-800 border-purple-300 hover:bg-purple-200', icon: 'fa-user-graduate' },
   '':  { text: '未記', bg: 'bg-slate-50 text-slate-400 border-slate-200', icon: 'fa-minus' }
 };
 
@@ -29,7 +30,7 @@ let appData = null;
 let currentClubId = null;
 let currentDate = '2026-10-06';
 let searchQuery = '';
-let filterStatus = 'ALL'; // ALL, PRESENT, ABSENT, LEAVE
+let filterStatus = 'ALL'; // ALL, PRESENT, ABSENT, EXEMPT
 
 // ==========================================
 // 2. 初始化與密碼管制 (門禁)
@@ -112,8 +113,11 @@ function loadData() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       appData = JSON.parse(saved);
+      // Double check gifted students annotations
+      ensureGiftedAnnotations();
     } else if (typeof INITIAL_CLUBS_DATA !== 'undefined') {
       appData = JSON.parse(JSON.stringify(INITIAL_CLUBS_DATA));
+      ensureGiftedAnnotations();
       saveData();
     } else {
       console.error('No initial data available');
@@ -122,17 +126,53 @@ function loadData() {
     console.error('Error loading data:', e);
     if (typeof INITIAL_CLUBS_DATA !== 'undefined') {
       appData = JSON.parse(JSON.stringify(INITIAL_CLUBS_DATA));
+      ensureGiftedAnnotations();
     }
   }
 
   // 設定預設社團與日期
   if (appData && appData.clubs && appData.clubs.length > 0) {
     currentClubId = appData.clubs[0].id;
-    // 預設選擇最近的週二日期
     if (appData.tuesdayDates && appData.tuesdayDates.length > 0) {
       currentDate = appData.tuesdayDates[0];
     }
   }
+}
+
+/**
+ * 確保 201陳揚宗 與 204陳紅妘 的資優生備註與第7節免出席設定確實套用
+ */
+function ensureGiftedAnnotations() {
+  if (!appData || !appData.clubs) return;
+
+  const giftedTargets = [
+    { name: '陳揚宗', classes: ['201', '801'] },
+    { name: '陳紅妘', classes: ['204', '804'] }
+  ];
+
+  appData.clubs.forEach(club => {
+    club.students.forEach(student => {
+      const match = giftedTargets.find(g => g.name === student.name && g.classes.includes(student.class));
+      if (match) {
+        student.isGifted = true;
+        student.specialTag = '資優生(第7節免出席)';
+        
+        // Ensure all attendance dates have p7='免' and proper note
+        const dates = club.activeDates || appData.tuesdayDates || [];
+        dates.forEach(d => {
+          if (!student.attendance[d]) {
+            student.attendance[d] = { p7: '免', p8: 'O', note: '資優鑑定生不用上第7節，不用出席' };
+          } else {
+            student.attendance[d].p7 = '免';
+            if (!student.attendance[d].p8) student.attendance[d].p8 = 'O';
+            if (!student.attendance[d].note) {
+              student.attendance[d].note = '資優鑑定生不用上第7節，不用出席';
+            }
+          }
+        });
+      }
+    });
+  });
 }
 
 function saveData() {
@@ -159,6 +199,7 @@ function resetToDefault() {
   if (confirm('⚠️ 警告：確定要將所有社團點名資料「重置回原始匯入狀態」嗎？\n所有自訂點名紀錄與修改將會被覆蓋！')) {
     if (typeof INITIAL_CLUBS_DATA !== 'undefined') {
       appData = JSON.parse(JSON.stringify(INITIAL_CLUBS_DATA));
+      ensureGiftedAnnotations();
       saveData();
       renderApp();
       showToast('🔄 已成功重設所有社團資料回原始狀態！', 'info');
@@ -169,11 +210,6 @@ function resetToDefault() {
 // ==========================================
 // 4. 週二日期嚴格管制與輔助運算
 // ==========================================
-/**
- * 檢查日期是否為週二
- * @param {string} dateStr YYYY-MM-DD
- * @returns {boolean}
- */
 function isTuesday(dateStr) {
   if (!dateStr) return false;
   const parts = dateStr.split('-');
@@ -182,16 +218,11 @@ function isTuesday(dateStr) {
   return d.getDay() === 2; // 0=Sun, 1=Mon, 2=Tue
 }
 
-/**
- * 自動將任意日期調整為最接近的週二
- * @param {string} dateStr YYYY-MM-DD
- * @returns {string} YYYY-MM-DD
- */
 function snapToTuesday(dateStr) {
   const parts = dateStr.split('-');
   const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
   const day = d.getDay();
-  const diff = 2 - day; // 距離週二差距
+  const diff = 2 - day;
   d.setDate(d.getDate() + diff);
   
   const y = d.getFullYear();
@@ -200,9 +231,6 @@ function snapToTuesday(dateStr) {
   return `${y}-${m}-${dt}`;
 }
 
-/**
- * 轉民國年格式 (如: 115/10/20 週二)
- */
 function formatRocDate(dateStr) {
   if (!dateStr) return '';
   const parts = dateStr.split('-');
@@ -224,7 +252,6 @@ function formatShortRoc(dateStr) {
 // 5. 事件監聽設置
 // ==========================================
 function setupEventListeners() {
-  // 通行密碼輸入
   const pwdInput = document.getElementById('pwd-input');
   if (pwdInput) {
     pwdInput.addEventListener('keydown', (e) => {
@@ -243,11 +270,9 @@ function setupEventListeners() {
     });
   }
 
-  // 登出按鈕
   const logoutBtn = document.getElementById('btn-logout');
   if (logoutBtn) logoutBtn.addEventListener('click', logout);
 
-  // 搜尋學生
   const searchInput = document.getElementById('student-search');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -256,7 +281,6 @@ function setupEventListeners() {
     });
   }
 
-  // 出席篩選
   const filterSelect = document.getElementById('filter-status-select');
   if (filterSelect) {
     filterSelect.addEventListener('change', (e) => {
@@ -265,7 +289,6 @@ function setupEventListeners() {
     });
   }
 
-  // 週二日期下拉選擇
   const dateSelect = document.getElementById('date-select');
   if (dateSelect) {
     dateSelect.addEventListener('change', (e) => {
@@ -274,7 +297,6 @@ function setupEventListeners() {
     });
   }
 
-  // 前一週與後一週按鈕
   const prevDateBtn = document.getElementById('btn-prev-date');
   if (prevDateBtn) {
     prevDateBtn.addEventListener('click', () => navigateDate(-1));
@@ -284,61 +306,51 @@ function setupEventListeners() {
     nextDateBtn.addEventListener('click', () => navigateDate(1));
   }
 
-  // 新增/自訂週二日期
   const addDateBtn = document.getElementById('btn-add-custom-date');
   if (addDateBtn) {
     addDateBtn.addEventListener('click', promptAddCustomDate);
   }
 
-  // 一鍵全部出席
   const btnAllPresent = document.getElementById('btn-all-present');
   if (btnAllPresent) {
     btnAllPresent.addEventListener('click', markAllPresent);
   }
 
-  // 一鍵第8節同步第7節
   const btnSyncP8 = document.getElementById('btn-sync-p8');
   if (btnSyncP8) {
     btnSyncP8.addEventListener('click', syncPeriod7ToPeriod8);
   }
 
-  // 一鍵清除當日點名
   const btnClearDate = document.getElementById('btn-clear-date');
   if (btnClearDate) {
     btnClearDate.addEventListener('click', clearCurrentDateAttendance);
   }
 
-  // 新增學生按鈕
   const btnAddStudent = document.getElementById('btn-add-student');
   if (btnAddStudent) {
     btnAddStudent.addEventListener('click', showAddStudentModal);
   }
 
-  // 匯出 Excel (本社)
   const btnExportClubExcel = document.getElementById('btn-export-club-excel');
   if (btnExportClubExcel) {
     btnExportClubExcel.addEventListener('click', exportCurrentClubExcel);
   }
 
-  // 匯出 Excel (全校所有社團活頁簿)
   const btnExportAllExcel = document.getElementById('btn-export-all-excel');
   if (btnExportAllExcel) {
     btnExportAllExcel.addEventListener('click', exportAllClubsWorkbook);
   }
 
-  // 匯出 CSV
   const btnExportCsv = document.getElementById('btn-export-csv');
   if (btnExportCsv) {
     btnExportCsv.addEventListener('click', exportCurrentClubCsv);
   }
 
-  // 列印 / PDF
   const btnPrint = document.getElementById('btn-print-view');
   if (btnPrint) {
     btnPrint.addEventListener('click', triggerPrint);
   }
 
-  // 資料管理 (備份/還原/重設)
   const btnBackup = document.getElementById('btn-backup-json');
   if (btnBackup) {
     btnBackup.addEventListener('click', exportBackupJson);
@@ -370,9 +382,6 @@ function renderApp() {
   renderStatsDashboard();
 }
 
-/**
- * 渲染頂部社團標籤卡片
- */
 function renderClubTabs() {
   const container = document.getElementById('club-tabs-container');
   if (!container || !appData.clubs) return;
@@ -383,6 +392,9 @@ function renderClubTabs() {
       ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 font-semibold border-blue-600'
       : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200 hover:border-slate-300';
     
+    // Check if club has gifted students
+    const hasGifted = club.students.some(s => s.isGifted);
+
     return `
       <button 
         onclick="switchClub('${club.id}')"
@@ -390,6 +402,7 @@ function renderClubTabs() {
       >
         <span class="w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-blue-500'}"></span>
         <span class="truncate">${club.name}</span>
+        ${hasGifted ? '<span class="text-[10px] bg-purple-500 text-white px-1.5 py-0.2 rounded-full" title="含資優生免第7節">資優</span>' : ''}
         <span class="text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-blue-700 text-blue-100' : 'bg-slate-100 text-slate-500'}">
           ${club.studentCount}人
         </span>
@@ -401,7 +414,6 @@ function renderClubTabs() {
 function switchClub(clubId) {
   currentClubId = clubId;
   const club = getCurrentClub();
-  // Check if current date is in club's activeDates
   if (club && club.activeDates && !club.activeDates.includes(currentDate)) {
     currentDate = club.activeDates[0];
   }
@@ -413,9 +425,6 @@ function getCurrentClub() {
   return appData.clubs.find(c => c.id === currentClubId) || appData.clubs[0];
 }
 
-/**
- * 渲染週二日期下拉選單
- */
 function renderDateSelector() {
   const select = document.getElementById('date-select');
   const club = getCurrentClub();
@@ -429,7 +438,6 @@ function renderDateSelector() {
     return `<option value="${d}" ${isSelected ? 'selected' : ''}>${label}</option>`;
   }).join('');
 
-  // 更新當前日期標題文字
   const dateTitleEl = document.getElementById('current-date-title');
   if (dateTitleEl) {
     dateTitleEl.innerHTML = `
@@ -440,9 +448,6 @@ function renderDateSelector() {
   }
 }
 
-/**
- * 日期前後切換
- */
 function navigateDate(direction) {
   const club = getCurrentClub();
   if (!club) return;
@@ -459,9 +464,6 @@ function navigateDate(direction) {
   }
 }
 
-/**
- * 自訂/新增週二日期 (嚴格限定每週二)
- */
 function promptAddCustomDate() {
   const input = prompt('請輸入要新增或自訂的社團活動日期 (格式: YYYY-MM-DD)：\n⚠️ 南投國中規定：社團點名日期一律固定為「每週二」！', currentDate);
   if (!input) return;
@@ -496,9 +498,6 @@ function promptAddCustomDate() {
   showToast(`📅 已成功切換至週二日期：${formatRocDate(finalDate)}`, 'success');
 }
 
-/**
- * 渲染社團詳細資訊表頭
- */
 function renderClubHeader() {
   const club = getCurrentClub();
   if (!club) return;
@@ -531,7 +530,7 @@ function renderClubHeader() {
 }
 
 /**
- * 渲染學生點名名單表格
+ * 渲染學生點名名單表格（二元點名：出席 / 缺席，資優生免第7節）
  */
 function renderStudentList() {
   const club = getCurrentClub();
@@ -546,17 +545,18 @@ function renderStudentList() {
     students = students.filter(s => 
       s.name.toLowerCase().includes(searchQuery) ||
       s.class.toLowerCase().includes(searchQuery) ||
-      String(s.seat).includes(searchQuery)
+      String(s.seat).includes(searchQuery) ||
+      (s.specialTag && s.specialTag.toLowerCase().includes(searchQuery))
     );
   }
 
-  // 出席狀態過濾
+  // 出席狀態過濾：出席、缺席、資優免出席
   if (filterStatus !== 'ALL') {
     students = students.filter(s => {
       const att = s.attendance[currentDate] || { p7: '', p8: '' };
       if (filterStatus === 'PRESENT') return att.p7 === 'O' && att.p8 === 'O';
       if (filterStatus === 'ABSENT') return att.p7 === 'X' || att.p8 === 'X';
-      if (filterStatus === 'LEAVE') return ['事', '病', '公', '喪'].includes(att.p7) || ['事', '病', '公', '喪'].includes(att.p8);
+      if (filterStatus === 'EXEMPT') return s.isGifted || att.p7 === '免';
       return true;
     });
   }
@@ -568,7 +568,7 @@ function renderStudentList() {
   if (students.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="8" class="text-center py-12 text-slate-400">
+        <td colspan="7" class="text-center py-12 text-slate-400">
           <i class="fa-solid fa-user-slash text-3xl mb-2 block"></i>
           沒有符合條件的學生名單
         </td>
@@ -578,13 +578,18 @@ function renderStudentList() {
   }
 
   tableBody.innerHTML = students.map((s, idx) => {
-    const att = s.attendance[currentDate] || { p7: 'O', p8: 'O', note: '' };
-    const p7Meta = STATUS_LABELS[att.p7] || STATUS_LABELS[''];
-    const p8Meta = STATUS_LABELS[att.p8] || STATUS_LABELS[''];
+    // 預設點名：資優生第7節免到，其餘預設出席 O
+    const defaultP7 = s.isGifted ? '免' : 'O';
+    const defaultNote = s.isGifted ? '資優鑑定生不用上第7節，不用出席' : '';
+    const att = s.attendance[currentDate] || { p7: defaultP7, p8: 'O', note: defaultNote };
+    
+    const p7Meta = STATUS_LABELS[att.p7] || STATUS_LABELS['O'];
+    const p8Meta = STATUS_LABELS[att.p8] || STATUS_LABELS['O'];
     const isPres = s.role === '社長' || (s.role && s.role.includes('社'));
+    const isGifted = Boolean(s.isGifted);
 
     return `
-      <tr class="hover:bg-slate-50/80 transition-colors border-b border-slate-100 student-row" data-student-num="${s.num}">
+      <tr class="hover:bg-slate-50/80 transition-colors border-b border-slate-100 student-row ${isGifted ? 'bg-purple-50/30' : ''}" data-student-num="${s.num}">
         <!-- 序號 -->
         <td class="px-3 py-3 text-center text-xs font-mono text-slate-400">
           ${s.num || idx + 1}
@@ -597,48 +602,49 @@ function renderStudentList() {
           </span>
         </td>
 
-        <!-- 姓名與幹部 -->
+        <!-- 姓名與身份註記 (社長 / 資優生) -->
         <td class="px-4 py-3 whitespace-nowrap">
-          <div class="flex items-center gap-1.5">
-            <span class="font-bold text-slate-800 text-base">${s.name}</span>
-            ${isPres ? '<span class="text-xs bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded shadow-sm">👑社長</span>' : ''}
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="font-bold text-slate-900 text-base">${s.name}</span>
+            ${isPres ? '<span class="text-xs bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded shadow-sm">👑 社長</span>' : ''}
+            ${isGifted ? '<span class="text-xs bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-full border border-purple-200 shadow-sm flex items-center gap-1"><i class="fa-solid fa-graduation-cap"></i> 資優生 (第7節免出席)</span>' : ''}
             ${s.gender ? `<span class="text-xs text-slate-400 ml-1">(${s.gender})</span>` : ''}
           </div>
         </td>
 
-        <!-- 第7節 點名狀態 -->
+        <!-- 第7節 點名狀態 (出席 O / 缺席 X / 資優生 免) -->
         <td class="px-3 py-3 text-center">
           <button 
             type="button"
             onclick="cycleStatus('${club.id}', ${s.num}, 'p7')"
-            title="點擊切換狀態 (O出席 / X缺席 / 事 / 病 / 公 / 喪)"
-            class="status-btn px-3 py-1.5 rounded-lg border text-sm font-bold shadow-sm inline-flex items-center gap-1.5 ${p7Meta.bg}"
+            title="點擊單鍵切換點名狀態"
+            class="status-btn px-4 py-1.5 rounded-xl border text-sm font-bold shadow-sm inline-flex items-center gap-1.5 ${p7Meta.bg}"
           >
             <i class="fa-solid ${p7Meta.icon} text-xs"></i>
             <span>${p7Meta.text}</span>
-            <span class="font-mono text-xs opacity-75">(${att.p7 || '無'})</span>
+            <span class="font-mono text-xs opacity-80">(${att.p7 || 'O'})</span>
           </button>
         </td>
 
-        <!-- 第8節 點名狀態 -->
+        <!-- 第8節 點名狀態 (出席 O / 缺席 X) -->
         <td class="px-3 py-3 text-center">
           <button 
             type="button"
             onclick="cycleStatus('${club.id}', ${s.num}, 'p8')"
-            title="點擊切換狀態 (O出席 / X缺席 / 事 / 病 / 公 / 喪)"
-            class="status-btn px-3 py-1.5 rounded-lg border text-sm font-bold shadow-sm inline-flex items-center gap-1.5 ${p8Meta.bg}"
+            title="點擊切換點名狀態 (出席 / 缺席)"
+            class="status-btn px-4 py-1.5 rounded-xl border text-sm font-bold shadow-sm inline-flex items-center gap-1.5 ${p8Meta.bg}"
           >
             <i class="fa-solid ${p8Meta.icon} text-xs"></i>
             <span>${p8Meta.text}</span>
-            <span class="font-mono text-xs opacity-75">(${att.p8 || '無'})</span>
+            <span class="font-mono text-xs opacity-80">(${att.p8 || 'O'})</span>
           </button>
         </td>
 
-        <!-- 違規與課堂備註 -->
+        <!-- 違規與備註欄位 (資優生預填不用上第7節) -->
         <td class="px-3 py-3">
           <input 
             type="text" 
-            value="${escapeHtml(att.note || '')}" 
+            value="${escapeHtml(att.note !== undefined ? att.note : (isGifted ? '資優鑑定生不用上第7節，不用出席' : ''))}" 
             placeholder="點擊輸入課堂紀律/違規/表現備註..."
             onblur="updateStudentNote('${club.id}', ${s.num}, this.value)"
             class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition bg-white"
@@ -670,7 +676,7 @@ function renderStudentList() {
 }
 
 /**
- * 輪替切換點名狀態
+ * 點名切換核心：點名分成【出席】與【缺席】；資優生第7節支援【免出席】
  */
 function cycleStatus(clubId, studentNum, period) {
   const club = appData.clubs.find(c => c.id === clubId);
@@ -678,13 +684,24 @@ function cycleStatus(clubId, studentNum, period) {
   const student = club.students.find(s => s.num === studentNum);
   if (!student) return;
 
+  const defaultP7 = student.isGifted ? '免' : 'O';
+  const defaultNote = student.isGifted ? '資優鑑定生不用上第7節，不用出席' : '';
+
   if (!student.attendance[currentDate]) {
-    student.attendance[currentDate] = { p7: 'O', p8: 'O', note: '' };
+    student.attendance[currentDate] = { p7: defaultP7, p8: 'O', note: defaultNote };
   }
 
-  const currentVal = student.attendance[currentDate][period] || '';
-  const idx = STATUS_CYCLE.indexOf(currentVal);
-  const nextVal = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+  const currentVal = student.attendance[currentDate][period] || (period === 'p7' ? defaultP7 : 'O');
+  let nextVal = 'O';
+
+  if (student.isGifted && period === 'p7') {
+    // 資優生第7節：免 -> O -> X -> 免 循環
+    const idx = STATUS_CYCLE_GIFTED_P7.indexOf(currentVal);
+    nextVal = idx === -1 ? '免' : STATUS_CYCLE_GIFTED_P7[(idx + 1) % STATUS_CYCLE_GIFTED_P7.length];
+  } else {
+    // 點名分為「出席」與「缺席」：單鍵直接二元切換
+    nextVal = currentVal === 'O' ? 'X' : 'O';
+  }
 
   student.attendance[currentDate][period] = nextVal;
   saveData();
@@ -692,24 +709,23 @@ function cycleStatus(clubId, studentNum, period) {
   renderStatsDashboard();
 }
 
-/**
- * 個別學生第8節同步第7節
- */
 function syncStudentP7ToP8(clubId, studentNum) {
   const club = appData.clubs.find(c => c.id === clubId);
   if (!club) return;
   const student = club.students.find(s => s.num === studentNum);
   if (!student || !student.attendance[currentDate]) return;
 
-  student.attendance[currentDate].p8 = student.attendance[currentDate].p7;
+  // 資優生第7節免出席，第8節正常上課預設出席
+  if (student.isGifted && student.attendance[currentDate].p7 === '免') {
+    student.attendance[currentDate].p8 = 'O';
+  } else {
+    student.attendance[currentDate].p8 = student.attendance[currentDate].p7;
+  }
   saveData();
   renderStudentList();
   renderStatsDashboard();
 }
 
-/**
- * 更新違規與備註文字
- */
 function updateStudentNote(clubId, studentNum, noteText) {
   const club = appData.clubs.find(c => c.id === clubId);
   if (!club) return;
@@ -717,7 +733,11 @@ function updateStudentNote(clubId, studentNum, noteText) {
   if (!student) return;
 
   if (!student.attendance[currentDate]) {
-    student.attendance[currentDate] = { p7: 'O', p8: 'O', note: '' };
+    student.attendance[currentDate] = { 
+      p7: student.isGifted ? '免' : 'O', 
+      p8: 'O', 
+      note: '' 
+    };
   }
   student.attendance[currentDate].note = noteText.trim();
   saveData();
@@ -731,18 +751,27 @@ function markAllPresent() {
   if (!club) return;
 
   club.students.forEach(s => {
+    const isG = Boolean(s.isGifted);
     if (!s.attendance[currentDate]) {
-      s.attendance[currentDate] = { p7: 'O', p8: 'O', note: '' };
+      s.attendance[currentDate] = { 
+        p7: isG ? '免' : 'O', 
+        p8: 'O', 
+        note: isG ? '資優鑑定生不用上第7節，不用出席' : '' 
+      };
     } else {
-      s.attendance[currentDate].p7 = 'O';
+      s.attendance[currentDate].p7 = isG ? '免' : 'O';
       s.attendance[currentDate].p8 = 'O';
+      if (isG && !s.attendance[currentDate].note) {
+        s.attendance[currentDate].note = '資優鑑定生不用上第7節，不用出席';
+      }
     }
   });
 
   saveData();
   renderStudentList();
   renderStatsDashboard();
-  showToast(`✅ ${club.name} 全體 ${club.studentCount} 位學生已標記為【全部出席 (O)】`, 'success');
+  const hasGifted = club.students.some(s => s.isGifted);
+  showToast(`✅ ${club.name} 全體已標記【全員出席 (O)】${hasGifted ? '（資優生第7節維持免出席）' : ''}`, 'success');
 }
 
 function syncPeriod7ToPeriod8() {
@@ -751,14 +780,18 @@ function syncPeriod7ToPeriod8() {
 
   club.students.forEach(s => {
     if (s.attendance[currentDate]) {
-      s.attendance[currentDate].p8 = s.attendance[currentDate].p7;
+      if (s.isGifted && s.attendance[currentDate].p7 === '免') {
+        s.attendance[currentDate].p8 = 'O';
+      } else {
+        s.attendance[currentDate].p8 = s.attendance[currentDate].p7;
+      }
     }
   });
 
   saveData();
   renderStudentList();
   renderStatsDashboard();
-  showToast(`🔄 已成功將第 7 節點名狀態全部同步至第 8 節！`, 'info');
+  showToast(`🔄 已成功將第 7 節點名狀態同步至第 8 節！`, 'info');
 }
 
 function clearCurrentDateAttendance() {
@@ -767,7 +800,7 @@ function clearCurrentDateAttendance() {
 
   if (confirm(`確定要清除【${club.name}】在【${formatRocDate(currentDate)}】的所有點名紀錄嗎？`)) {
     club.students.forEach(s => {
-      s.attendance[currentDate] = { p7: '', p8: '', note: '' };
+      s.attendance[currentDate] = { p7: '', p8: '', note: s.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' };
     });
 
     saveData();
@@ -778,39 +811,39 @@ function clearCurrentDateAttendance() {
 }
 
 // ==========================================
-// 8. 即時統計看板
+// 8. 即時統計看板（出席與缺席二元統計）
 // ==========================================
 function renderStatsDashboard() {
   const club = getCurrentClub();
   if (!club) return;
 
   const total = club.students.length;
-  let p7Present = 0, p7Absent = 0, p7Leave = 0;
-  let p8Present = 0, p8Absent = 0, p8Leave = 0;
+  let p7Present = 0, p7Absent = 0, p7Exempt = 0;
+  let p8Present = 0, p8Absent = 0;
 
   club.students.forEach(s => {
-    const att = s.attendance[currentDate] || { p7: '', p8: '' };
+    const att = s.attendance[currentDate] || { p7: 'O', p8: 'O' };
     if (att.p7 === 'O') p7Present++;
     else if (att.p7 === 'X') p7Absent++;
-    else if (['事', '病', '公', '喪'].includes(att.p7)) p7Leave++;
+    else if (att.p7 === '免' || s.isGifted) p7Exempt++;
 
     if (att.p8 === 'O') p8Present++;
     else if (att.p8 === 'X') p8Absent++;
-    else if (['事', '病', '公', '喪'].includes(att.p8)) p8Leave++;
   });
 
-  const p7Rate = total > 0 ? Math.round((p7Present / total) * 100) : 0;
-  const p8Rate = total > 0 ? Math.round((p8Present / total) * 100) : 0;
+  // 計算有效應到人數（扣除第7節資優免出席人數）
+  const p7EffectiveTotal = total - p7Exempt;
+  const p7Rate = p7EffectiveTotal > 0 ? Math.round((p7Present / p7EffectiveTotal) * 100) : 100;
+  const p8Rate = total > 0 ? Math.round((p8Present / total) * 100) : 100;
 
   document.getElementById('stat-total-students').textContent = total;
   document.getElementById('stat-p7-present').textContent = p7Present;
   document.getElementById('stat-p7-absent').textContent = p7Absent;
-  document.getElementById('stat-p7-leave').textContent = p7Leave;
+  document.getElementById('stat-p7-leave').textContent = p7Exempt; // 顯示免到人數
   document.getElementById('stat-p7-rate').textContent = `${p7Rate}%`;
 
   document.getElementById('stat-p8-present').textContent = p8Present;
   document.getElementById('stat-p8-absent').textContent = p8Absent;
-  document.getElementById('stat-p8-leave').textContent = p8Leave;
   document.getElementById('stat-p8-rate').textContent = `${p8Rate}%`;
 
   const barEl = document.getElementById('stat-rate-bar');
@@ -827,13 +860,14 @@ function showAddStudentModal() {
   const club = getCurrentClub();
   if (!club) return;
 
-  const cls = prompt('請輸入學生班級代碼 (如 701, 802)：');
+  const cls = prompt('請輸入學生班級代碼 (如 701, 802, 201)：');
   if (!cls) return;
   const seat = prompt('請輸入學生座號 (如 12)：');
   if (!seat) return;
   const name = prompt('請輸入學生真實姓名：');
   if (!name) return;
   const gender = prompt('請輸入性別 (男 / 女)：', '男');
+  const isGifted = confirm('該名學生是否為【資優鑑定生】（第7節免出席）？');
   const isPres = confirm('該名學生是否為【社長 / 幹部】？');
 
   const newNum = club.students.length > 0 ? Math.max(...club.students.map(s => s.num || 0)) + 1 : 1;
@@ -844,8 +878,14 @@ function showAddStudentModal() {
     name: name.trim(),
     gender: gender ? gender.trim() : '',
     role: isPres ? '社長' : '',
+    isGifted: isGifted,
+    specialTag: isGifted ? '資優生(第7節免出席)' : '',
     attendance: {
-      [currentDate]: { p7: 'O', p8: 'O', note: '' }
+      [currentDate]: { 
+        p7: isGifted ? '免' : 'O', 
+        p8: 'O', 
+        note: isGifted ? '資優鑑定生不用上第7節，不用出席' : '' 
+      }
     }
   };
 
@@ -871,13 +911,23 @@ function editStudent(clubId, studentNum) {
   const newClass = prompt('修改學生班級：', s.class);
   const newSeat = prompt('修改學生座號：', s.seat);
   const newGender = prompt('修改學生性別 (男/女)：', s.gender);
-  const isPres = confirm(`該生是否為幹部？\n目前狀態：${s.role || '一般社員'}`);
+  const isGifted = confirm(`該生是否為【資優鑑定生】？\n（目前狀態：${s.isGifted ? '是（第7節免出席）' : '否'}）`);
+  const isPres = confirm(`該生是否為幹部？\n（目前狀態：${s.role || '一般社員'}）`);
 
   s.name = newName.trim();
   if (newClass) s.class = newClass.trim();
   if (newSeat) s.seat = newSeat.trim();
   if (newGender) s.gender = newGender.trim();
+  s.isGifted = isGifted;
+  s.specialTag = isGifted ? '資優生(第7節免出席)' : '';
   s.role = isPres ? '社長' : '';
+
+  if (isGifted && s.attendance[currentDate]) {
+    s.attendance[currentDate].p7 = '免';
+    if (!s.attendance[currentDate].note) {
+      s.attendance[currentDate].note = '資優鑑定生不用上第7節，不用出席';
+    }
+  }
 
   saveData();
   renderApp();
@@ -913,7 +963,6 @@ function exportAllClubsWorkbook() {
 
   appData.clubs.forEach(club => {
     const ws = buildClubWorksheet(club);
-    // Excel sheet name max 31 chars and no illegal characters
     const cleanName = club.name.replace(/[\\/?*[\]]/g, '').slice(0, 31);
     XLSX.utils.book_append_sheet(wb, ws, cleanName);
   });
@@ -923,9 +972,6 @@ function exportAllClubsWorkbook() {
   showToast(`📥 已成功匯出全校 13 個社團完整 Excel 活頁簿！`, 'success');
 }
 
-/**
- * 依據南投國中標準格式產生社團 Worksheet
- */
 function buildClubWorksheet(club) {
   const dates = club.activeDates || appData.tuesdayDates || [];
   const rows = [];
@@ -950,22 +996,26 @@ function buildClubWorksheet(club) {
   dates.forEach(() => {
     row4.push('7');
     row4.push('8');
-    row4.push('違規');
+    row4.push('違規/備註');
   });
   rows.push(row4);
 
   // Row 5+: 學生資料與點名
   club.students.forEach((s, idx) => {
+    let displayName = s.name;
+    if (s.role) displayName += `(${s.role})`;
+    if (s.isGifted) displayName += `[資優生]`;
+
     const sRow = [
       s.num || idx + 1,
       s.class,
       s.seat,
-      s.role ? `${s.name}(${s.role})` : s.name,
+      displayName,
       s.gender
     ];
 
     dates.forEach(d => {
-      const att = s.attendance[d] || { p7: '', p8: '', note: '' };
+      const att = s.attendance[d] || { p7: s.isGifted ? '免' : 'O', p8: 'O', note: s.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' };
       sRow.push(att.p7 || '');
       sRow.push(att.p8 || '');
       sRow.push(att.note || '');
@@ -976,18 +1026,17 @@ function buildClubWorksheet(club) {
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
 
-  // 設定欄寬
   ws['!cols'] = [
-    { wch: 6 },  // 序號
-    { wch: 8 },  // 班級
-    { wch: 8 },  // 座號
-    { wch: 14 }, // 姓名
-    { wch: 6 }   // 性別
+    { wch: 6 },
+    { wch: 8 },
+    { wch: 8 },
+    { wch: 18 },
+    { wch: 6 }
   ];
   dates.forEach(() => {
-    ws['!cols'].push({ wch: 5 });  // 7
-    ws['!cols'].push({ wch: 5 });  // 8
-    ws['!cols'].push({ wch: 12 }); // 違規
+    ws['!cols'].push({ wch: 6 });  // 7
+    ws['!cols'].push({ wch: 6 });  // 8
+    ws['!cols'].push({ wch: 22 }); // 備註
   });
 
   return ws;
@@ -1001,35 +1050,36 @@ function exportCurrentClubCsv() {
   if (!club) return;
 
   const dates = club.activeDates || appData.tuesdayDates || [];
-  let csv = '\uFEFF'; // UTF-8 BOM
+  let csv = '\uFEFF';
   csv += `南投國中 115學年度 社團點名單 -【${club.name}】\n`;
-  csv += `指導教師: ${club.teacher},地點: ${club.location},費用: ${club.fee},活動時間: 每週二第7-8節\n`;
+  csv += `指導教師: ${club.teacher},地點: ${club.location},費用: ${club.fee},活動時間: 每週二第7-8節,點名規則: 出席O / 缺席X\n`;
 
-  // 日期列
   const dateHeader = ['', '', '', '', ''];
   dates.forEach(d => {
     dateHeader.push(`"${formatShortRoc(d)}"`, '""', '""');
   });
   csv += dateHeader.join(',') + '\n';
 
-  // 欄位標題
   const subHeader = ['序號', '班級', '座號', '姓名', '性別'];
   dates.forEach(() => {
     subHeader.push('第7節', '第8節', '違規/備註');
   });
   csv += subHeader.join(',') + '\n';
 
-  // 學生列
   club.students.forEach((s, idx) => {
+    let displayName = s.name;
+    if (s.role) displayName += `(${s.role})`;
+    if (s.isGifted) displayName += `[資優生]`;
+
     const row = [
       s.num || idx + 1,
       `"${s.class}"`,
       `"${s.seat}"`,
-      `"${s.name}"`,
+      `"${displayName}"`,
       `"${s.gender}"`
     ];
     dates.forEach(d => {
-      const att = s.attendance[d] || { p7: '', p8: '', note: '' };
+      const att = s.attendance[d] || { p7: s.isGifted ? '免' : 'O', p8: 'O', note: s.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' };
       row.push(`"${att.p7}"`, `"${att.p8}"`, `"${att.note}"`);
     });
     csv += row.join(',') + '\n';
@@ -1054,7 +1104,6 @@ function triggerPrint() {
   const club = getCurrentClub();
   if (!club) return;
 
-  // 準備列印專用內容
   const printTitleEl = document.getElementById('print-school-title');
   const printClubEl = document.getElementById('print-club-info');
   const printTableBody = document.getElementById('print-table-body');
@@ -1074,19 +1123,23 @@ function triggerPrint() {
 
   if (printTableBody) {
     printTableBody.innerHTML = club.students.map((s, idx) => {
-      const att = s.attendance[currentDate] || { p7: 'O', p8: 'O', note: '' };
+      const att = s.attendance[currentDate] || { p7: s.isGifted ? '免' : 'O', p8: 'O', note: s.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' };
+      let printName = s.name;
+      if (s.role) printName += ` <span style="font-size: 8pt;">(${s.role})</span>`;
+      if (s.isGifted) printName += ` <span style="font-size: 8pt; color: #7e22ce;">[資優生·免7節]</span>`;
+
       return `
         <tr>
           <td>${s.num || idx + 1}</td>
           <td>${s.class}</td>
           <td>${s.seat}</td>
           <td style="font-weight: bold; text-align: left; padding-left: 8px;">
-            ${s.name} ${s.role ? `<span style="font-size: 8pt;">(${s.role})</span>` : ''}
+            ${printName}
           </td>
           <td>${s.gender}</td>
           <td style="font-size: 13pt; font-weight: bold;">${att.p7 || 'O'}</td>
           <td style="font-size: 13pt; font-weight: bold;">${att.p8 || 'O'}</td>
-          <td style="text-align: left; padding-left: 6px;">${att.note || ''}</td>
+          <td style="text-align: left; padding-left: 6px; font-size: 8.5pt;">${att.note || ''}</td>
         </tr>
       `;
     }).join('');
@@ -1123,6 +1176,7 @@ function importBackupJson(event) {
       const imported = JSON.parse(e.target.result);
       if (imported && imported.clubs && Array.isArray(imported.clubs)) {
         appData = imported;
+        ensureGiftedAnnotations();
         saveData();
         renderApp();
         showToast('🎉 成功從備份檔還原社團點名資料！', 'success');

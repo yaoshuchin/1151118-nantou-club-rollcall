@@ -120,6 +120,14 @@ for sname in target_sheets:
         seat_str = str(seat).strip() if seat is not None else ''
         gender_str = str(gender).strip() if gender is not None else ''
         
+        # Check gifted status
+        # 201陳揚宗跟204陳紅妘是資優鑑定生不用上第7節註記上去，不用出席
+        is_gifted = False
+        special_tag = ''
+        if (name_str == '陳揚宗' and cls_str in ['201', '801']) or (name_str == '陳紅妘' and cls_str in ['204', '804']):
+            is_gifted = True
+            special_tag = '資優生(第7節免出席)'
+
         role = ''
         for idx, off in enumerate(officers):
             match_by_name = (off.get('name') and off.get('name') == name_str)
@@ -143,10 +151,20 @@ for sname in target_sheets:
             p7 = ws.cell(r, col).value
             p8 = ws.cell(r, col + 1).value
             note = ws.cell(r, col + 2).value
+            
+            if is_gifted:
+                p7_val = '免'
+                p8_val = 'O'
+                note_val = '資優鑑定生不用上第7節，不用出席'
+            else:
+                p7_val = 'O' if (p7 is None or not str(p7).strip()) else ('O' if str(p7).strip() == 'O' else 'X')
+                p8_val = 'O' if (p8 is None or not str(p8).strip()) else ('O' if str(p8).strip() == 'O' else 'X')
+                note_val = str(note).strip() if note is not None and str(note).strip() else ''
+
             init_attendance[d_str] = {
-                'p7': str(p7).strip() if p7 is not None and str(p7).strip() else 'O',
-                'p8': str(p8).strip() if p8 is not None and str(p8).strip() else 'O',
-                'note': str(note).strip() if note is not None and str(note).strip() else ''
+                'p7': p7_val,
+                'p8': p8_val,
+                'note': note_val
             }
             
         students.append({
@@ -156,6 +174,8 @@ for sname in target_sheets:
             'name': name_str,
             'gender': gender_str,
             'role': role,
+            'isGifted': is_gifted,
+            'specialTag': special_tag,
             'attendance': init_attendance
         })
         
@@ -186,8 +206,8 @@ output_data = {
 with open('data/clubs_data.json', 'w', encoding='utf-8') as f:
     json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-print('Successfully exported data/clubs_data.json!')
-print(f'Total clubs: {len(clubs)}')
+print('Successfully updated data/clubs_data.json!')
 for c in clubs:
-    officer_names = [o.get('name') for o in c['officers'] if o.get('name')]
-    print(f"- {c['name']}: {c['studentCount']} 人, 教師: {c['teacher']}, 地點: {c['location']}, 費用: {c['fee']}, 幹部: {officer_names}")
+    for s in c['students']:
+        if s.get('isGifted'):
+            print(f"  [資優生註記] {c['name']} - {s['class']}班{s['seat']}號 {s['name']} - 備註: {s['attendance'][tuesday_dates[0]]['note']}")

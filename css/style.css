@@ -83,6 +83,12 @@ body {
   border-color: #fca5a5;
 }
 
+.status-exempt {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+  border-color: #d8b4fe;
+}
+
 .status-leave-personal {
   background-color: #ffedd5;
   color: #c2410c;
