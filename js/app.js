@@ -282,11 +282,17 @@ function setupEventListeners() {
     });
   }
 
-  // 全校跨社學生即時搜尋事件監聽
+  // 全校跨社學生即時搜尋事件監聽 (支援打字即時預覽與 Enter 鍵立即全校定位)
   const globalSearchInput = document.getElementById('global-student-search');
   if (globalSearchInput) {
     globalSearchInput.addEventListener('input', (e) => {
       renderGlobalSearchResults(e.target.value);
+    });
+    globalSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleGlobalSearchSubmit();
+      }
     });
   }
 
@@ -856,7 +862,7 @@ function findStudentAcrossAllClubs(code) {
 }
 
 /**
- * 處理快速輸入缺席名單
+ * 處理快速輸入缺席名單（支援單筆或多筆，全校跨社自動標記，免切換視窗、免確認彈窗）
  */
 function handleQuickAbsentSubmit() {
   const inputEl = document.getElementById('quick-absent-input');
@@ -865,7 +871,7 @@ function handleQuickAbsentSubmit() {
 
   const rawVal = inputEl.value.trim();
   if (!rawVal) {
-    showToast('請輸入要記缺席的年班座號代碼 (如 10306 或 70306)', 'info');
+    showToast('請輸入要記缺席的年班座號代碼 (如 70102 或 10306)', 'info');
     inputEl.focus();
     return;
   }
@@ -874,17 +880,25 @@ function handleQuickAbsentSubmit() {
   const currentClub = getCurrentClub();
   if (!currentClub) return;
 
-  const rawCodes = rawVal.split(/[,，\s]+/).map(s => s.trim()).filter(Boolean);
+  const rawCodes = rawVal.split(/[,，;\s\n]+/).map(s => s.trim()).filter(Boolean);
   if (rawCodes.length === 0) return;
 
   let markedStudents = [];
   let notFoundCodes = [];
-  let otherClubFound = [];
-  let lastMarkedStudentNum = null;
+  let lastMarkedStudentInCurrentClub = null;
 
   rawCodes.forEach(code => {
-    // 1. 於本社團查找學生
-    const student = findStudentByCode(code, currentClub);
+    // 優先在當前檢視的社團查找學生；若不在本社，則自動於全校其他社團精確搜尋
+    let student = findStudentByCode(code, currentClub);
+    let targetClub = currentClub;
+
+    if (!student) {
+      const other = findStudentAcrossAllClubs(code);
+      if (other) {
+        student = other.student;
+        targetClub = other.club;
+      }
+    }
 
     if (student) {
       if (!student.attendance[currentDate]) {
@@ -899,14 +913,12 @@ function handleQuickAbsentSubmit() {
         student.attendance[currentDate].p8 = 'X';
         if (student.isGifted) {
           student.attendance[currentDate].p7 = '免';
-          showToast(`ℹ️ ${student.name} 為資優鑑定生，第7節依校規免出席，第8節已標記為【缺席 (X)】`, 'info');
         } else {
           student.attendance[currentDate].p7 = 'X';
         }
       } else if (periodMode === 'p7') {
         if (student.isGifted) {
           student.attendance[currentDate].p7 = '免';
-          showToast(`ℹ️ ${student.name} 為資優鑑定生，不用上第7節（保持免出席）`, 'info');
         } else {
           student.attendance[currentDate].p7 = 'X';
         }
@@ -914,16 +926,18 @@ function handleQuickAbsentSubmit() {
         student.attendance[currentDate].p8 = 'X';
       }
 
-      markedStudents.push(student);
-      lastMarkedStudentNum = student.num;
-    } else {
-      // 2. 本社無此人，跨社團搜尋
-      const other = findStudentAcrossAllClubs(code);
-      if (other && other.club.id !== currentClub.id) {
-        otherClubFound.push({ code, student: other.student, club: other.club });
-      } else {
-        notFoundCodes.push(code);
+      markedStudents.push({
+        code,
+        student,
+        club: targetClub,
+        isCurrentClub: (targetClub.id === currentClub.id)
+      });
+
+      if (targetClub.id === currentClub.id) {
+        lastMarkedStudentInCurrentClub = student.num;
       }
+    } else {
+      notFoundCodes.push(code);
     }
   });
 
@@ -936,10 +950,10 @@ function handleQuickAbsentSubmit() {
     inputEl.value = '';
     inputEl.focus();
 
-    // 捲動並醒目提示最後一筆學生
-    if (lastMarkedStudentNum !== null) {
+    // 若有標記到本社學生，平滑捲動並閃爍醒目提示
+    if (lastMarkedStudentInCurrentClub !== null) {
       setTimeout(() => {
-        const row = document.querySelector(`tr[data-student-num="${lastMarkedStudentNum}"]`);
+        const row = document.querySelector(`tr[data-student-num="${lastMarkedStudentInCurrentClub}"]`);
         if (row) {
           row.classList.remove('highlight-row');
           void row.offsetWidth; // trigger reflow
@@ -949,27 +963,161 @@ function handleQuickAbsentSubmit() {
       }, 50);
     }
 
-    const names = markedStudents.map(s => `${s.class}班${s.seat}號 ${s.name}`).join('、');
-    showToast(`🚨 已成功將 ${names} 標記為【缺席 (X)】！`, 'error');
+    // 格式化回報訊息（不切換視窗、不跳確認彈窗，直接顯示成功標記名單與社團）
+    const summary = markedStudents.map(m => {
+      const giftedNote = m.student.isGifted ? ' (第7節資優免)' : '';
+      return `${m.student.class}班${m.student.seat}號 ${m.student.name}【${m.club.name}】${giftedNote}`;
+    }).join('、');
+
+    showToast(`🚨 已成功為 ${markedStudents.length} 位學生登記【缺席 (X)】：${summary}`, 'error');
   }
 
-  // 若發現其他社團學生，提醒使用者並支援一鍵切換
-  if (otherClubFound.length > 0) {
-    otherClubFound.forEach(item => {
-      const msg = `查得代碼 [${item.code}] 為 ${item.student.class}班${item.student.seat}號【${item.student.name}】，屬於【${item.club.name}】（非當前社團）！\n\n是否立即切換至【${item.club.name}】為其登記缺席？`;
-      if (confirm(msg)) {
-        switchClub(item.club.id);
-        setTimeout(() => {
-          inputEl.value = item.code;
-          handleQuickAbsentSubmit();
-        }, 120);
-      }
-    });
-  }
-
-  // 找不到學生
+  // 查無代碼
   if (notFoundCodes.length > 0) {
-    showToast(`❌ 查無此年班座號：${notFoundCodes.join(', ')}，請確認號碼是否正確！`, 'error');
+    showToast(`❌ 全校查無此學生代碼：${notFoundCodes.join(', ')}，請確認號碼是否正確！`, 'error');
+  }
+}
+
+// ==========================================
+// 6.6 批次大量匯入全校缺席名單 (免切換視窗)
+// ==========================================
+function openBatchAbsentModal() {
+  const modal = document.getElementById('batch-absent-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    const textarea = document.getElementById('batch-absent-textarea');
+    if (textarea) textarea.focus();
+  }
+}
+
+function closeBatchAbsentModal() {
+  const modal = document.getElementById('batch-absent-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function insertBatchExample(text) {
+  const textarea = document.getElementById('batch-absent-textarea');
+  if (textarea) {
+    textarea.value = text;
+    textarea.focus();
+  }
+}
+
+function executeBatchAbsentImport() {
+  const textarea = document.getElementById('batch-absent-textarea');
+  const periodSelect = document.getElementById('batch-absent-period');
+  const noteInput = document.getElementById('batch-absent-note');
+  if (!textarea) return;
+
+  const raw = textarea.value.trim();
+  if (!raw) {
+    alert('請先輸入或貼上要登記缺席的學生座號代碼或姓名！');
+    textarea.focus();
+    return;
+  }
+
+  const periodMode = periodSelect ? periodSelect.value : 'both';
+  const customNote = noteInput ? noteInput.value.trim() : '';
+  const currentClub = getCurrentClub();
+
+  const rawCodes = raw.split(/[\r\n,，;；\s]+/).map(s => s.trim()).filter(Boolean);
+  if (rawCodes.length === 0) return;
+
+  let markedStudents = [];
+  let notFoundCodes = [];
+
+  rawCodes.forEach(code => {
+    // 優先在當前社團找，若無則跨全校所有社團找
+    let student = currentClub ? findStudentByCode(code, currentClub) : null;
+    let studentClub = currentClub;
+
+    if (!student) {
+      const other = findStudentAcrossAllClubs(code);
+      if (other) {
+        student = other.student;
+        studentClub = other.club;
+      }
+    }
+
+    if (student) {
+      if (!student.attendance[currentDate]) {
+        student.attendance[currentDate] = { 
+          p7: student.isGifted ? '免' : 'O', 
+          p8: 'O', 
+          note: student.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' 
+        };
+      }
+
+      if (periodMode === 'both') {
+        student.attendance[currentDate].p8 = 'X';
+        if (student.isGifted) {
+          student.attendance[currentDate].p7 = '免';
+        } else {
+          student.attendance[currentDate].p7 = 'X';
+        }
+      } else if (periodMode === 'p7') {
+        if (student.isGifted) {
+          student.attendance[currentDate].p7 = '免';
+        } else {
+          student.attendance[currentDate].p7 = 'X';
+        }
+      } else if (periodMode === 'p8') {
+        student.attendance[currentDate].p8 = 'X';
+      }
+
+      if (customNote) {
+        student.attendance[currentDate].note = customNote;
+      }
+
+      markedStudents.push({
+        code,
+        student,
+        club: studentClub
+      });
+    } else {
+      notFoundCodes.push(code);
+    }
+  });
+
+  if (markedStudents.length > 0) {
+    saveData();
+    renderStudentList();
+    renderStatsDashboard();
+
+    // 顯示結果面板
+    const resultContainer = document.getElementById('batch-absent-result-container');
+    const resultTitle = document.getElementById('batch-absent-result-title');
+    const resultBody = document.getElementById('batch-absent-result-body');
+
+    if (resultContainer && resultBody) {
+      resultContainer.classList.remove('hidden');
+      resultTitle.innerHTML = `<span class="text-rose-700 font-bold">✅ 成功登記 ${markedStudents.length} 人缺席${notFoundCodes.length > 0 ? `，⚠️ ${notFoundCodes.length} 筆未找到` : ''}</span>`;
+      
+      let html = '<div class="space-y-1">';
+      markedStudents.forEach(m => {
+        const giftedTag = m.student.isGifted ? ' (第7節資優免)' : '';
+        html += `
+          <div class="flex items-center justify-between p-2 rounded bg-rose-50 text-rose-900 border border-rose-200">
+            <span class="font-bold">${m.student.class}班 ${m.student.seat}號 ${escapeHtml(m.student.name)} ${giftedTag}</span>
+            <span class="text-xs bg-rose-200 text-rose-800 font-semibold px-2 py-0.5 rounded">${escapeHtml(m.club.name)}</span>
+          </div>
+        `;
+      });
+
+      if (notFoundCodes.length > 0) {
+        html += `
+          <div class="p-2 rounded bg-amber-50 text-amber-900 border border-amber-200 mt-2 font-bold">
+            ❌ 查無以下學生代碼：${escapeHtml(notFoundCodes.join(', '))}
+          </div>
+        `;
+      }
+      html += '</div>';
+      resultBody.innerHTML = html;
+    }
+
+    showToast(`🎉 已成功一次性跨社登記 ${markedStudents.length} 位學生缺席！`, 'success');
+  } else {
+    alert(`❌ 全校查無任何輸入之學生代碼：\n${notFoundCodes.join(', ')}`);
   }
 }
 
@@ -1685,11 +1833,36 @@ function renderGlobalSearchResults(query) {
   }).join('');
 }
 
+function handleGlobalSearchSubmit() {
+  const input = document.getElementById('global-student-search');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) {
+    showToast('請輸入要搜尋的學生姓名或年班座號代碼 (如 70102、10306 或 陳揚宗)', 'info');
+    input.focus();
+    return;
+  }
+
+  // 1. 即時渲染搜尋面板
+  renderGlobalSearchResults(val);
+
+  // 2. 進行跨校比對並直接切換至第一筆學生所在社團並平滑滾動定位
+  const results = searchGlobalStudents(val);
+  if (results.length > 0) {
+    const target = results[0];
+    jumpToStudentInClub(target.club.id, target.student.num);
+    const giftedTag = target.student.isGifted ? ' (資優生·第7節免)' : '';
+    showToast(`🎯 已找到【${target.student.class}班${target.student.seat}號 ${target.student.name}】，已自動切換至【${target.club.name}】並為您定位！${giftedTag}`, 'success');
+  } else {
+    showToast(`❌ 全校查無符合「${val}」的學生，請確認代碼或姓名！`, 'error');
+  }
+}
+
 function setGlobalSearch(code) {
   const input = document.getElementById('global-student-search');
   if (input) {
     input.value = code;
-    renderGlobalSearchResults(code);
+    handleGlobalSearchSubmit();
   }
 }
 
@@ -1702,8 +1875,17 @@ function clearGlobalSearch() {
 }
 
 function jumpToStudentInClub(clubId, studentNum) {
+  // 清除下方社內搜尋過濾條件，確保目標學生在列表中可見
+  searchQuery = '';
+  const innerSearch = document.getElementById('student-search');
+  if (innerSearch) innerSearch.value = '';
+  filterStatus = 'ALL';
+  const filterSelect = document.getElementById('filter-status-select');
+  if (filterSelect) filterSelect.value = 'ALL';
+
   switchClub(clubId);
-  clearGlobalSearch();
+
+  // 平滑滾動並醒目閃爍
   setTimeout(() => {
     const row = document.querySelector(`tr[data-student-num="${studentNum}"]`);
     if (row) {
@@ -1712,7 +1894,7 @@ function jumpToStudentInClub(clubId, studentNum) {
       row.classList.add('highlight-row');
       row.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }, 100);
+  }, 120);
 }
 
 function quickToggleAttendance(clubId, studentNum, status) {
