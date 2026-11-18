@@ -281,6 +281,21 @@ function setupEventListeners() {
     });
   }
 
+  // 快速輸入缺席名單事件監聽 (支援 Enter 快捷與按鈕)
+  const quickAbsentInput = document.getElementById('quick-absent-input');
+  if (quickAbsentInput) {
+    quickAbsentInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleQuickAbsentSubmit();
+      }
+    });
+  }
+  const quickAbsentBtn = document.getElementById('btn-quick-absent-submit');
+  if (quickAbsentBtn) {
+    quickAbsentBtn.addEventListener('click', handleQuickAbsentSubmit);
+  }
+
   const filterSelect = document.getElementById('filter-status-select');
   if (filterSelect) {
     filterSelect.addEventListener('change', (e) => {
@@ -741,6 +756,212 @@ function updateStudentNote(clubId, studentNum, noteText) {
   }
   student.attendance[currentDate].note = noteText.trim();
   saveData();
+}
+
+// ==========================================
+// 6.5 快速記缺席演算法與查詢比對
+// ==========================================
+/**
+ * 解析年班座號代碼尋找學生
+ * 支援格式：
+ * 1. 5位數：
+ *    - 10306 (1年3班6號) -> 班級: 103 或 703, 座號: 6
+ *    - 70306 (7年3班6號) -> 班級: 703 或 103, 座號: 6
+ *    - 20410 (2年4班10號) -> 班級: 204 或 804, 座號: 10
+ *    - 80410 (8年4班10號) -> 班級: 804 或 204, 座號: 10
+ *    - 30907 (3年9班7號) -> 班級: 309 或 909, 座號: 7
+ * 2. 4位數：
+ *    - 7036 (7年3班6號) -> 班級: 703/103, 座號: 6
+ *    - 1036 (1年3班6號) -> 班級: 103/703, 座號: 6
+ * 3. 帶分隔符：
+ *    - 703-6, 103-06, 703 6, 204-10
+ * 4. 學生姓名：直接比對姓名
+ */
+function findStudentByCode(code, club) {
+  if (!code || !club || !club.students) return null;
+  const trimmed = String(code).trim();
+  if (!trimmed) return null;
+
+  // 1. 直接姓名完全匹配
+  const byName = club.students.find(s => s.name === trimmed);
+  if (byName) return byName;
+
+  let targetClasses = [];
+  let targetSeat = null;
+
+  // 2. 5 位數解析 (如 10306, 70306, 80410, 20410)
+  const m5 = trimmed.match(/^([123789])(\d{2})(\d{2})$/);
+  if (m5) {
+    const g = parseInt(m5[1], 10);
+    const c = m5[2];
+    const st = parseInt(m5[3], 10);
+    const g789 = g <= 3 ? g + 6 : g;
+    const g123 = g >= 7 ? g - 6 : g;
+    targetClasses = [`${g123}${c}`, `${g789}${c}`];
+    targetSeat = String(st);
+  }
+
+  // 3. 4 位數解析 (如 7036, 1036)
+  const m4 = !m5 && trimmed.match(/^([123789])(\d{2})(\d{1})$/);
+  if (m4) {
+    const g = parseInt(m4[1], 10);
+    const c = m4[2];
+    const st = parseInt(m4[3], 10);
+    const g789 = g <= 3 ? g + 6 : g;
+    const g123 = g >= 7 ? g - 6 : g;
+    targetClasses = [`${g123}${c}`, `${g789}${c}`];
+    targetSeat = String(st);
+  }
+
+  // 4. 分隔符號解析 (如 703-6, 103 06, 804-10)
+  const mSep = !m5 && !m4 && trimmed.match(/^([123789]\d{2})[\s\-_#]+(\d{1,2})$/);
+  if (mSep) {
+    const clsRaw = mSep[1];
+    const g = parseInt(clsRaw[0], 10);
+    const c = clsRaw.slice(1);
+    const st = parseInt(mSep[2], 10);
+    const g789 = g <= 3 ? g + 6 : g;
+    const g123 = g >= 7 ? g - 6 : g;
+    targetClasses = [`${g123}${c}`, `${g789}${c}`];
+    targetSeat = String(st);
+  }
+
+  if (targetClasses.length > 0 && targetSeat !== null) {
+    return club.students.find(s => {
+      const matchClass = targetClasses.includes(s.class);
+      const matchSeat = String(parseInt(s.seat, 10)) === String(parseInt(targetSeat, 10));
+      return matchClass && matchSeat;
+    }) || null;
+  }
+
+  return null;
+}
+
+function findStudentAcrossAllClubs(code) {
+  if (!appData || !appData.clubs) return null;
+  for (const c of appData.clubs) {
+    const st = findStudentByCode(code, c);
+    if (st) return { club: c, student: st };
+  }
+  return null;
+}
+
+/**
+ * 處理快速輸入缺席名單
+ */
+function handleQuickAbsentSubmit() {
+  const inputEl = document.getElementById('quick-absent-input');
+  const periodEl = document.getElementById('quick-absent-period');
+  if (!inputEl) return;
+
+  const rawVal = inputEl.value.trim();
+  if (!rawVal) {
+    showToast('請輸入要記缺席的年班座號代碼 (如 10306 或 70306)', 'info');
+    inputEl.focus();
+    return;
+  }
+
+  const periodMode = periodEl ? periodEl.value : 'both';
+  const currentClub = getCurrentClub();
+  if (!currentClub) return;
+
+  const rawCodes = rawVal.split(/[,，\s]+/).map(s => s.trim()).filter(Boolean);
+  if (rawCodes.length === 0) return;
+
+  let markedStudents = [];
+  let notFoundCodes = [];
+  let otherClubFound = [];
+  let lastMarkedStudentNum = null;
+
+  rawCodes.forEach(code => {
+    // 1. 於本社團查找學生
+    const student = findStudentByCode(code, currentClub);
+
+    if (student) {
+      if (!student.attendance[currentDate]) {
+        student.attendance[currentDate] = { 
+          p7: student.isGifted ? '免' : 'O', 
+          p8: 'O', 
+          note: student.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' 
+        };
+      }
+
+      if (periodMode === 'both') {
+        student.attendance[currentDate].p8 = 'X';
+        if (student.isGifted) {
+          student.attendance[currentDate].p7 = '免';
+          showToast(`ℹ️ ${student.name} 為資優鑑定生，第7節依校規免出席，第8節已標記為【缺席 (X)】`, 'info');
+        } else {
+          student.attendance[currentDate].p7 = 'X';
+        }
+      } else if (periodMode === 'p7') {
+        if (student.isGifted) {
+          student.attendance[currentDate].p7 = '免';
+          showToast(`ℹ️ ${student.name} 為資優鑑定生，不用上第7節（保持免出席）`, 'info');
+        } else {
+          student.attendance[currentDate].p7 = 'X';
+        }
+      } else if (periodMode === 'p8') {
+        student.attendance[currentDate].p8 = 'X';
+      }
+
+      markedStudents.push(student);
+      lastMarkedStudentNum = student.num;
+    } else {
+      // 2. 本社無此人，跨社團搜尋
+      const other = findStudentAcrossAllClubs(code);
+      if (other && other.club.id !== currentClub.id) {
+        otherClubFound.push({ code, student: other.student, club: other.club });
+      } else {
+        notFoundCodes.push(code);
+      }
+    }
+  });
+
+  if (markedStudents.length > 0) {
+    saveData();
+    renderStudentList();
+    renderStatsDashboard();
+
+    // 清空輸入框並重新聚焦
+    inputEl.value = '';
+    inputEl.focus();
+
+    // 捲動並醒目提示最後一筆學生
+    if (lastMarkedStudentNum !== null) {
+      setTimeout(() => {
+        const row = document.querySelector(`tr[data-student-num="${lastMarkedStudentNum}"]`);
+        if (row) {
+          row.classList.remove('highlight-row');
+          void row.offsetWidth; // trigger reflow
+          row.classList.add('highlight-row');
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
+    }
+
+    const names = markedStudents.map(s => `${s.class}班${s.seat}號 ${s.name}`).join('、');
+    showToast(`🚨 已成功將 ${names} 標記為【缺席 (X)】！`, 'error');
+  }
+
+  // 若發現其他社團學生，提醒使用者並支援一鍵切換
+  if (otherClubFound.length > 0) {
+    otherClubFound.forEach(item => {
+      const msg = `查得代碼 [${item.code}] 為 ${item.student.class}班${item.student.seat}號【${item.student.name}】，屬於【${item.club.name}】（非當前社團）！\n\n是否立即切換至【${item.club.name}】為其登記缺席？`;
+      if (confirm(msg)) {
+        switchClub(item.club.id);
+        setTimeout(() => {
+          inputEl.value = item.code;
+          handleQuickAbsentSubmit();
+        }, 120);
+      }
+    });
+  }
+
+  // 找不到學生
+  if (notFoundCodes.length > 0) {
+    showToast(`❌ 查無此年班座號：${notFoundCodes.join(', ')}，請確認號碼是否正確！`, 'error');
+  }
 }
 
 // ==========================================

@@ -401,6 +401,77 @@
            ==================================================== -->
       <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6 no-print">
         
+        <!-- ====================================================
+             ⚡ 快速輸入缺席名單輸入列 (Quick Absent Entry Bar)
+             ==================================================== -->
+        <div class="p-4 bg-gradient-to-r from-rose-50 via-rose-50/70 to-pink-50 border-b border-rose-200/80">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            
+            <!-- Title & Example Hint -->
+            <div class="flex items-center gap-3 shrink-0">
+              <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-sm shadow-rose-500/25 shrink-0">
+                <i class="fa-solid fa-user-xmark"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-black text-rose-950">快速記缺席輸入列</span>
+                  <span class="text-[11px] bg-rose-200/80 text-rose-900 font-bold px-2 py-0.5 rounded-full">快捷鍵 Enter</span>
+                </div>
+                <div class="text-xs text-rose-700/90 mt-0.5 flex flex-wrap items-center gap-1.5">
+                  <span>輸入年班座號：</span>
+                  <span class="font-mono bg-white/80 px-1.5 py-0.2 rounded border border-rose-200 text-rose-800 font-semibold cursor-pointer hover:bg-rose-100 transition" onclick="document.getElementById('quick-absent-input').value='10306'; document.getElementById('quick-absent-input').focus();" title="點擊帶入範例">例: 1年3班6號輸 10306 或 70306</span>
+                  <span class="hidden sm:inline opacity-70">（支援多筆逗號分隔）</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input & Action Bar -->
+            <div class="flex flex-1 items-center gap-2 max-w-2xl">
+              <div class="relative flex-1">
+                <i class="fa-solid fa-keyboard absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-400 text-xs"></i>
+                <input 
+                  type="text" 
+                  id="quick-absent-input"
+                  placeholder="輸入年班座號 (如 10306 或 70306)... 按 Enter 即記缺席"
+                  autocomplete="off"
+                  class="w-full pl-9 pr-24 py-2.5 rounded-xl border border-rose-300 focus:border-rose-600 focus:ring-2 focus:ring-rose-200 outline-none text-sm font-mono text-slate-900 bg-white shadow-inner transition placeholder:text-slate-400"
+                />
+                <button 
+                  type="button" 
+                  id="btn-quick-absent-clear"
+                  class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 px-1.5 py-0.5 rounded"
+                  title="清除輸入"
+                  onclick="const el = document.getElementById('quick-absent-input'); el.value=''; el.focus();"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <!-- Period Target Selection -->
+              <select 
+                id="quick-absent-period"
+                class="px-3 py-2.5 rounded-xl border border-rose-300 text-xs font-bold bg-white text-rose-900 outline-none shadow-sm cursor-pointer hover:border-rose-400 transition shrink-0"
+                title="選擇記缺席的節次"
+              >
+                <option value="both">第7節 & 第8節 皆缺席</option>
+                <option value="p7">僅第 7 節缺席</option>
+                <option value="p8">僅第 8 節缺席</option>
+              </select>
+
+              <!-- Submit Button -->
+              <button 
+                type="button" 
+                id="btn-quick-absent-submit"
+                class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-500/20 transition flex items-center gap-1.5 shrink-0"
+                title="送出標記缺席"
+              >
+                <i class="fa-solid fa-bolt"></i> 記缺席
+              </button>
+            </div>
+
+          </div>
+        </div>
+
         <!-- Table Filter Bar -->
         <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
           
