@@ -1,0 +1,211 @@
+/* 南投國中社團點名系統 Custom Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #0d9488;
+  --bg-main: #f8fafc;
+  --text-main: #1e293b;
+}
+
+body {
+  font-family: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f1f5f9;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animation for unlock and shake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Status Pill Buttons */
+.status-btn {
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.status-btn:hover {
+  transform: translateY(-1px);
+}
+
+.status-btn:active {
+  transform: translateY(0);
+}
+
+/* Attendance Status Specific Styling */
+.status-o {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.status-x {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.status-leave-personal {
+  background-color: #ffedd5;
+  color: #c2410c;
+  border-color: #fdba74;
+}
+
+.status-leave-sick {
+  background-color: #fef9c3;
+  color: #a16207;
+  border-color: #fde047;
+}
+
+.status-leave-official {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border-color: #a5b4fc;
+}
+
+.status-blank {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  border-color: #e2e8f0;
+}
+
+/* ========================================================
+   Print Stylesheet (Official School Paper Roll-Call Layout)
+   ======================================================== */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide Web Controls */
+  #password-gate,
+  #top-navbar,
+  #club-selector-section,
+  #quick-action-bar,
+  #toast-container,
+  #modal-container,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Show Print Only Elements */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Make sure container is full width and no shadow */
+  .print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Formal Table Layout */
+  table.print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 10pt !important;
+    page-break-inside: auto;
+  }
+
+  table.print-table tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  table.print-table th,
+  table.print-table td {
+    border: 1px solid #000000 !important;
+    padding: 4px 6px !important;
+    text-align: center !important;
+    color: #000000 !important;
+  }
+
+  table.print-table th {
+    background-color: #f3f4f6 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Print Header & Footer */
+  .print-header {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .print-header h1 {
+    font-size: 16pt !important;
+    font-weight: 800 !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  .print-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 8px;
+    font-size: 10.5pt;
+    border-bottom: 1px solid #333;
+    padding-bottom: 6px;
+  }
+
+  .print-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 10px;
+    font-size: 11pt;
+  }
+
+  .print-sig-box {
+    width: 30%;
+    border-bottom: 1px solid #000;
+    min-height: 40px;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 1.2cm 1cm 1.2cm 1cm;
+  }
+}
