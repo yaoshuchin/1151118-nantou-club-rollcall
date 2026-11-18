@@ -31,6 +31,7 @@ let currentClubId = null;
 let currentDate = '2026-10-06';
 let searchQuery = '';
 let filterStatus = 'ALL'; // ALL, PRESENT, ABSENT, EXEMPT
+let currentAbsenteeTab = 'weekly'; // weekly 或 semester
 
 // ==========================================
 // 2. 初始化與密碼管制 (門禁)
@@ -278,6 +279,14 @@ function setupEventListeners() {
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value.trim().toLowerCase();
       renderStudentList();
+    });
+  }
+
+  // 全校跨社學生即時搜尋事件監聽
+  const globalSearchInput = document.getElementById('global-student-search');
+  if (globalSearchInput) {
+    globalSearchInput.addEventListener('input', (e) => {
+      renderGlobalSearchResults(e.target.value);
     });
   }
 
@@ -1072,6 +1081,9 @@ function renderStatsDashboard() {
     const avgRate = Math.round((p7Rate + p8Rate) / 2);
     barEl.style.width = `${avgRate}%`;
   }
+
+  // 同步計算並渲染全校缺席即時看板
+  renderGlobalAbsentDashboard();
 }
 
 // ==========================================
@@ -1445,4 +1457,856 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+// ==========================================
+// 15. 全校缺席即時看板 (跨13社團監控)
+// ==========================================
+function renderGlobalAbsentDashboard() {
+  if (!appData || !appData.clubs) return;
+
+  let totalGlobalAbsentStudents = 0;
+  const clubsWithAbsence = [];
+
+  appData.clubs.forEach(c => {
+    const absentStudents = c.students.filter(s => {
+      const att = s.attendance[currentDate];
+      return att && (att.p7 === 'X' || att.p8 === 'X');
+    });
+
+    if (absentStudents.length > 0) {
+      totalGlobalAbsentStudents += absentStudents.length;
+      clubsWithAbsence.push({
+        id: c.id,
+        name: c.name,
+        count: absentStudents.length,
+        students: absentStudents
+      });
+    }
+  });
+
+  const countEl = document.getElementById('stat-global-absent-count');
+  if (countEl) {
+    countEl.textContent = totalGlobalAbsentStudents;
+    if (totalGlobalAbsentStudents > 0) {
+      countEl.className = 'text-2xl font-black text-rose-400 font-mono tracking-tight animate-pulse';
+    } else {
+      countEl.className = 'text-2xl font-black text-emerald-400 font-mono tracking-tight';
+    }
+  }
+
+  const clubsContainer = document.getElementById('stat-global-absent-clubs');
+  if (clubsContainer) {
+    if (totalGlobalAbsentStudents === 0) {
+      clubsContainer.innerHTML = `
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i> 今日全校 13 社團全員出席，零缺席！
+        </span>
+      `;
+    } else {
+      clubsContainer.innerHTML = clubsWithAbsence.map(item => {
+        return `
+          <button 
+            type="button" 
+            onclick="switchClub('${item.id}')" 
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-bold border border-rose-500/30 transition cursor-pointer"
+            title="點擊切換至【${escapeHtml(item.name)}】"
+          >
+            <span>${escapeHtml(item.name)}</span>
+            <span class="bg-rose-600 text-white text-[11px] px-1.5 py-0.2 rounded-full font-mono">${item.count}人</span>
+          </button>
+        `;
+      }).join('');
+    }
+  }
+}
+
+// ==========================================
+// 16. 全校跨社學生即時搜尋核心
+// ==========================================
+function searchGlobalStudents(rawQuery) {
+  if (!appData || !appData.clubs || !rawQuery) return [];
+  const q = String(rawQuery).trim().toLowerCase();
+  if (!q) return [];
+
+  const results = [];
+  const seenStudentKeys = new Set();
+
+  // 1. 先用精確代碼或全名比對 (支援 10306, 70306, 20410, 80410, 30907 等)
+  appData.clubs.forEach(club => {
+    const codeMatch = findStudentByCode(q, club);
+    if (codeMatch) {
+      const key = `${club.id}_${codeMatch.num}`;
+      if (!seenStudentKeys.has(key)) {
+        seenStudentKeys.add(key);
+        results.push({ club, student: codeMatch });
+      }
+    }
+  });
+
+  // 2. 進行模糊搜尋（姓名、班級、座號、組合字串）
+  appData.clubs.forEach(club => {
+    club.students.forEach(s => {
+      const key = `${club.id}_${s.num}`;
+      if (seenStudentKeys.has(key)) return;
+
+      const nameLower = (s.name || '').toLowerCase();
+      const cls = String(s.class || '').toLowerCase();
+      const seat = String(s.seat || '');
+      const seatPadded = seat.padStart(2, '0');
+
+      let altCls = cls;
+      if (cls.length === 3) {
+        const g = parseInt(cls[0], 10);
+        if (g >= 7 && g <= 9) {
+          altCls = `${g - 6}${cls.slice(1)}`;
+        } else if (g >= 1 && g <= 3) {
+          altCls = `${g + 6}${cls.slice(1)}`;
+        }
+      }
+
+      const codeVariants = [
+        `${cls}${seatPadded}`,
+        `${altCls}${seatPadded}`,
+        `${cls}${seat}`,
+        `${altCls}${seat}`,
+        `${cls}-${seat}`,
+        `${altCls}-${seat}`,
+        `${cls}班${seat}號`,
+        `${altCls}班${seat}號`
+      ];
+
+      const matchName = nameLower.includes(q);
+      const matchCls = cls.includes(q) || altCls.includes(q);
+      const matchCode = codeVariants.some(v => v.toLowerCase().includes(q));
+      const matchClub = (club.name || '').toLowerCase().includes(q);
+
+      if (matchName || matchCls || matchCode || matchClub) {
+        seenStudentKeys.add(key);
+        results.push({ club, student: s });
+      }
+    });
+  });
+
+  return results;
+}
+
+function renderGlobalSearchResults(query) {
+  const trimmed = query ? query.trim() : '';
+  const clearBtn = document.getElementById('btn-global-search-clear');
+  const panel = document.getElementById('global-search-results-panel');
+  const countEl = document.getElementById('global-search-count');
+  const listEl = document.getElementById('global-search-list');
+
+  if (!panel || !listEl) return;
+
+  if (!trimmed) {
+    panel.classList.add('hidden');
+    if (clearBtn) clearBtn.classList.add('hidden');
+    listEl.innerHTML = '';
+    return;
+  }
+
+  if (clearBtn) clearBtn.classList.remove('hidden');
+  panel.classList.remove('hidden');
+
+  const results = searchGlobalStudents(trimmed);
+  if (countEl) {
+    countEl.textContent = `搜尋結果 (${results.length} 筆)`;
+  }
+
+  if (results.length === 0) {
+    listEl.innerHTML = `
+      <div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+        <i class="fa-solid fa-user-xmark text-2xl mb-1 text-slate-300"></i>
+        <div class="text-xs">查無符合「${escapeHtml(trimmed)}」的學生，請確認年班座號代碼或姓名</div>
+      </div>
+    `;
+    return;
+  }
+
+  listEl.innerHTML = results.map(item => {
+    const c = item.club;
+    const s = item.student;
+    const att = s.attendance[currentDate] || { p7: s.isGifted ? '免' : 'O', p8: 'O' };
+    const isAbsent = att.p7 === 'X' || att.p8 === 'X';
+    const statusBadge = isAbsent 
+      ? `<span class="bg-rose-100 text-rose-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-rose-200">本日有缺席 (第7節:${att.p7 || 'O'} / 第8節:${att.p8 || 'O'})</span>`
+      : `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-emerald-200">本日出席正常 (第7節:${att.p7 || 'O'} / 第8節:${att.p8 || 'O'})</span>`;
+
+    return `
+      <div class="bg-slate-50 hover:bg-blue-50/50 p-3 rounded-xl border border-slate-200 hover:border-blue-300 transition flex flex-col justify-between gap-2 shadow-xs">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <span class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+              ${escapeHtml(s.name)}
+              <span class="font-mono text-xs font-semibold text-slate-600 bg-white px-1.5 py-0.5 rounded border border-slate-200">${s.class}班 ${s.seat}號</span>
+              ${s.gender ? `<span class="text-[11px] text-slate-400">(${s.gender})</span>` : ''}
+            </span>
+            <span class="text-xs font-bold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded-md truncate max-w-[120px]">${escapeHtml(c.name)}</span>
+          </div>
+          <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>指導老師: <strong class="text-slate-700">${escapeHtml(c.teacher || '無')}</strong></span>
+            <span>地點: <strong class="text-slate-700">${escapeHtml(c.location || '校內教室')}</strong></span>
+            ${s.role ? `<span class="text-amber-700 font-bold bg-amber-50 px-1.5 rounded border border-amber-200">👑 ${s.role}</span>` : ''}
+            ${s.isGifted ? `<span class="text-purple-700 font-bold bg-purple-50 px-1.5 rounded border border-purple-200">資優生(免第7節)</span>` : ''}
+          </div>
+          <div class="mt-2">
+            ${statusBadge}
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-200/60 mt-1">
+          <button 
+            type="button" 
+            onclick="jumpToStudentInClub('${c.id}', ${s.num})" 
+            class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition flex items-center gap-1 shadow-xs"
+          >
+            <i class="fa-solid fa-arrow-right-to-bracket text-[10px]"></i> 前往本社點名
+          </button>
+          <button 
+            type="button" 
+            onclick="quickToggleAttendance('${c.id}', ${s.num}, 'X')" 
+            class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-[11px] transition cursor-pointer"
+            title="快速記為缺席"
+          >
+            記缺席
+          </button>
+          <button 
+            type="button" 
+            onclick="quickToggleAttendance('${c.id}', ${s.num}, 'O')" 
+            class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold text-[11px] transition cursor-pointer"
+            title="快速記為出席"
+          >
+            記出席
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function setGlobalSearch(code) {
+  const input = document.getElementById('global-student-search');
+  if (input) {
+    input.value = code;
+    renderGlobalSearchResults(code);
+  }
+}
+
+function clearGlobalSearch() {
+  const input = document.getElementById('global-student-search');
+  if (input) {
+    input.value = '';
+    renderGlobalSearchResults('');
+  }
+}
+
+function jumpToStudentInClub(clubId, studentNum) {
+  switchClub(clubId);
+  clearGlobalSearch();
+  setTimeout(() => {
+    const row = document.querySelector(`tr[data-student-num="${studentNum}"]`);
+    if (row) {
+      row.classList.remove('highlight-row');
+      void row.offsetWidth;
+      row.classList.add('highlight-row');
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 100);
+}
+
+function quickToggleAttendance(clubId, studentNum, status) {
+  const club = appData.clubs.find(c => c.id === clubId);
+  if (!club) return;
+  const student = club.students.find(s => s.num === studentNum);
+  if (!student) return;
+
+  if (!student.attendance[currentDate]) {
+    student.attendance[currentDate] = { 
+      p7: student.isGifted ? '免' : 'O', 
+      p8: 'O', 
+      note: student.isGifted ? '資優鑑定生不用上第7節，不用出席' : '' 
+    };
+  }
+
+  if (status === 'X') {
+    if (student.isGifted) {
+      student.attendance[currentDate].p7 = '免';
+      student.attendance[currentDate].p8 = 'X';
+    } else {
+      student.attendance[currentDate].p7 = 'X';
+      student.attendance[currentDate].p8 = 'X';
+    }
+  } else if (status === 'O') {
+    if (student.isGifted) {
+      student.attendance[currentDate].p7 = '免';
+      student.attendance[currentDate].p8 = 'O';
+    } else {
+      student.attendance[currentDate].p7 = 'O';
+      student.attendance[currentDate].p8 = 'O';
+    }
+  }
+
+  saveData();
+  renderStudentList();
+  renderStatsDashboard();
+
+  const searchInput = document.getElementById('global-student-search');
+  if (searchInput && searchInput.value) {
+    renderGlobalSearchResults(searchInput.value);
+  }
+  showToast(`已更新 ${student.name} 的本日點名為【${status === 'X' ? '缺席 (X)' : '出席 (O)'}】`, status === 'X' ? 'error' : 'success');
+}
+
+// ==========================================
+// 17. 全校缺席名單管理與匯出 Modal 核心
+// ==========================================
+function openAbsenteeModal(type = 'weekly') {
+  currentAbsenteeTab = type;
+  const modal = document.getElementById('absentee-modal');
+  if (!modal) return;
+
+  const dateSelect = document.getElementById('modal-date-select');
+  if (dateSelect && appData && appData.tuesdayDates) {
+    dateSelect.innerHTML = appData.tuesdayDates.map(d => {
+      return `<option value="${d}" ${d === currentDate ? 'selected' : ''}>${formatRocDate(d)}</option>`;
+    }).join('');
+  }
+
+  updateAbsenteeModalTabsVisuals();
+  renderAbsenteeModalContent();
+  modal.classList.remove('hidden');
+}
+
+function closeAbsenteeModal() {
+  const modal = document.getElementById('absentee-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function switchAbsenteeTab(tab) {
+  currentAbsenteeTab = tab;
+  updateAbsenteeModalTabsVisuals();
+  renderAbsenteeModalContent();
+}
+
+function updateAbsenteeModalTabsVisuals() {
+  const btnWeekly = document.getElementById('tab-btn-weekly');
+  const btnSemester = document.getElementById('tab-btn-semester');
+  const weeklyControls = document.getElementById('modal-weekly-controls');
+  const colCumul = document.getElementById('modal-col-cumulative');
+
+  if (currentAbsenteeTab === 'weekly') {
+    if (btnWeekly) {
+      btnWeekly.className = 'px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm bg-white text-rose-700';
+    }
+    if (btnSemester) {
+      btnSemester.className = 'px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition';
+    }
+    if (weeklyControls) weeklyControls.classList.remove('hidden');
+    if (colCumul) colCumul.textContent = '節次情形';
+  } else {
+    if (btnWeekly) {
+      btnWeekly.className = 'px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition';
+    }
+    if (btnSemester) {
+      btnSemester.className = 'px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm bg-white text-rose-700';
+    }
+    if (weeklyControls) weeklyControls.classList.add('hidden');
+    if (colCumul) colCumul.textContent = '累計缺席次數';
+  }
+}
+
+function getWeeklyAbsentList(dateStr) {
+  if (!appData || !appData.clubs) return [];
+  const list = [];
+  appData.clubs.forEach(club => {
+    club.students.forEach(s => {
+      const att = s.attendance[dateStr];
+      if (att && (att.p7 === 'X' || att.p8 === 'X')) {
+        list.push({
+          date: dateStr,
+          clubId: club.id,
+          clubName: club.name,
+          teacher: club.teacher,
+          student: s,
+          p7: att.p7,
+          p8: att.p8,
+          note: att.note || ''
+        });
+      }
+    });
+  });
+  return list;
+}
+
+function getAllSemesterAbsentList() {
+  if (!appData || !appData.clubs) return [];
+  const dates = appData.tuesdayDates || [];
+  const list = [];
+
+  // 計算全學期每位學生的缺席累計總次數
+  const studentCumulative = new Map();
+  dates.forEach(d => {
+    appData.clubs.forEach(club => {
+      club.students.forEach(s => {
+        const att = s.attendance[d];
+        if (att && (att.p7 === 'X' || att.p8 === 'X')) {
+          const key = `${club.id}_${s.num}`;
+          studentCumulative.set(key, (studentCumulative.get(key) || 0) + 1);
+        }
+      });
+    });
+  });
+
+  // 整理清單
+  dates.forEach(d => {
+    appData.clubs.forEach(club => {
+      club.students.forEach(s => {
+        const att = s.attendance[d];
+        if (att && (att.p7 === 'X' || att.p8 === 'X')) {
+          const key = `${club.id}_${s.num}`;
+          list.push({
+            date: d,
+            clubId: club.id,
+            clubName: club.name,
+            teacher: club.teacher,
+            student: s,
+            p7: att.p7,
+            p8: att.p8,
+            note: att.note || '',
+            cumulativeCount: studentCumulative.get(key) || 1
+          });
+        }
+      });
+    });
+  });
+
+  return list;
+}
+
+function renderAbsenteeModalContent() {
+  const tableBody = document.getElementById('modal-absent-table-body');
+  const summaryEl = document.getElementById('modal-absent-summary');
+  if (!tableBody) return;
+
+  if (currentAbsenteeTab === 'weekly') {
+    const dateSelect = document.getElementById('modal-date-select');
+    const targetDate = dateSelect ? dateSelect.value : currentDate;
+    const list = getWeeklyAbsentList(targetDate);
+
+    if (summaryEl) {
+      summaryEl.innerHTML = `<span class="text-rose-600 font-bold">【${formatRocDate(targetDate)}】全校共 ${list.length} 位學生缺席</span>`;
+    }
+
+    if (list.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="10" class="py-12 text-center text-emerald-600 bg-emerald-50/40">
+            <i class="fa-solid fa-circle-check text-3xl mb-2 block"></i>
+            <span class="font-bold text-sm">🎉 太棒了！【${formatRocDate(targetDate)}】全校 13 個社團全員出席，零缺席！</span>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tableBody.innerHTML = list.map((item, idx) => {
+      const s = item.student;
+      const isGifted = Boolean(s.isGifted);
+      const isPres = Boolean(s.role);
+
+      const p7Badge = item.p7 === 'X' 
+        ? '<span class="bg-rose-100 text-rose-800 border border-rose-300 font-bold px-2 py-0.5 rounded text-[11px]">第7節: 缺席</span>'
+        : (item.p7 === '免' ? '<span class="bg-purple-100 text-purple-800 border border-purple-200 font-bold px-2 py-0.5 rounded text-[11px]">第7節: 免</span>' : '<span class="text-slate-400 text-[11px]">第7節: 出席</span>');
+
+      const p8Badge = item.p8 === 'X' 
+        ? '<span class="bg-rose-100 text-rose-800 border border-rose-300 font-bold px-2 py-0.5 rounded text-[11px]">第8節: 缺席</span>'
+        : '<span class="text-slate-400 text-[11px]">第8節: 出席</span>';
+
+      const periodDesc = (item.p7 === 'X' && item.p8 === 'X') 
+        ? '<span class="bg-rose-600 text-white font-bold px-2 py-0.5 rounded-full text-[11px]">7,8節均缺</span>'
+        : (item.p7 === 'X' ? '<span class="bg-rose-500 text-white font-bold px-2 py-0.5 rounded-full text-[11px]">第7節缺</span>' : '<span class="bg-rose-500 text-white font-bold px-2 py-0.5 rounded-full text-[11px]">第8節缺</span>');
+
+      return `
+        <tr class="hover:bg-rose-50/40 transition">
+          <td class="px-3 py-2.5 text-center font-mono text-slate-400">${idx + 1}</td>
+          <td class="px-3 py-2.5 text-center font-mono text-slate-600 whitespace-nowrap">${formatShortRoc(item.date)}</td>
+          <td class="px-3 py-2.5 font-bold text-slate-800 whitespace-nowrap">
+            <span class="cursor-pointer hover:text-blue-600" onclick="switchClub('${item.clubId}'); closeAbsenteeModal();" title="切換至此社團">
+              ${escapeHtml(item.clubName)}
+            </span>
+          </td>
+          <td class="px-3 py-2.5 text-center whitespace-nowrap font-mono font-bold text-slate-700">
+            ${s.class}班 ${s.seat}號
+          </td>
+          <td class="px-3 py-2.5 whitespace-nowrap">
+            <span class="font-bold text-slate-900">${escapeHtml(s.name)}</span>
+            ${isPres ? '<span class="ml-1 text-[10px] bg-amber-100 text-amber-800 px-1 rounded font-bold">幹部</span>' : ''}
+            ${isGifted ? '<span class="ml-1 text-[10px] bg-purple-100 text-purple-800 px-1 rounded font-bold">資優生</span>' : ''}
+          </td>
+          <td class="px-2 py-2.5 text-center text-slate-500">${s.gender || '-'}</td>
+          <td class="px-3 py-2.5 text-center whitespace-nowrap flex flex-wrap items-center justify-center gap-1">
+            ${p7Badge} ${p8Badge}
+          </td>
+          <td class="px-3 py-2.5 text-center whitespace-nowrap">
+            ${periodDesc}
+          </td>
+          <td class="px-3 py-2.5 text-slate-600 text-xs">
+            ${escapeHtml(item.note || '—')}
+          </td>
+          <td class="px-2 py-2.5 text-center whitespace-nowrap">
+            <button 
+              type="button" 
+              onclick="jumpToStudentInClub('${item.clubId}', ${s.num}); closeAbsenteeModal();"
+              class="px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs"
+            >
+              檢視
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+  } else {
+    // Semester cumulative list
+    const list = getAllSemesterAbsentList();
+
+    if (summaryEl) {
+      summaryEl.innerHTML = `<span class="text-rose-600 font-bold">115學年度 第一學期 全校累計共有 ${list.length} 人次缺席</span>`;
+    }
+
+    if (list.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="10" class="py-12 text-center text-emerald-600 bg-emerald-50/40">
+            <i class="fa-solid fa-circle-check text-3xl mb-2 block"></i>
+            <span class="font-bold text-sm">🎉 全學期目前尚無任何缺席紀錄，全員全勤！</span>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tableBody.innerHTML = list.map((item, idx) => {
+      const s = item.student;
+      const isGifted = Boolean(s.isGifted);
+      const isPres = Boolean(s.role);
+
+      const periodDesc = (item.p7 === 'X' && item.p8 === 'X') 
+        ? '7,8節均缺' 
+        : (item.p7 === 'X' ? '第7節缺席' : '第8節缺席');
+
+      return `
+        <tr class="hover:bg-rose-50/40 transition">
+          <td class="px-3 py-2.5 text-center font-mono text-slate-400">${idx + 1}</td>
+          <td class="px-3 py-2.5 text-center font-mono text-slate-600 whitespace-nowrap">${formatRocDate(item.date)}</td>
+          <td class="px-3 py-2.5 font-bold text-slate-800 whitespace-nowrap">
+            <span class="cursor-pointer hover:text-blue-600" onclick="switchClub('${item.clubId}'); closeAbsenteeModal();">
+              ${escapeHtml(item.clubName)}
+            </span>
+          </td>
+          <td class="px-3 py-2.5 text-center whitespace-nowrap font-mono font-bold text-slate-700">
+            ${s.class}班 ${s.seat}號
+          </td>
+          <td class="px-3 py-2.5 whitespace-nowrap">
+            <span class="font-bold text-slate-900">${escapeHtml(s.name)}</span>
+            ${isPres ? '<span class="ml-1 text-[10px] bg-amber-100 text-amber-800 px-1 rounded font-bold">幹部</span>' : ''}
+            ${isGifted ? '<span class="ml-1 text-[10px] bg-purple-100 text-purple-800 px-1 rounded font-bold">資優生</span>' : ''}
+          </td>
+          <td class="px-2 py-2.5 text-center text-slate-500">${s.gender || '-'}</td>
+          <td class="px-3 py-2.5 text-center whitespace-nowrap">
+            <span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">${periodDesc}</span>
+          </td>
+          <td class="px-3 py-2.5 text-center whitespace-nowrap">
+            <span class="bg-rose-600 text-white font-mono px-2 py-0.5 rounded-full text-xs font-bold">
+              累計 ${item.cumulativeCount} 次
+            </span>
+          </td>
+          <td class="px-3 py-2.5 text-slate-600 text-xs">
+            ${escapeHtml(item.note || '—')}
+          </td>
+          <td class="px-2 py-2.5 text-center whitespace-nowrap">
+            <button 
+              type="button" 
+              onclick="jumpToStudentInClub('${item.clubId}', ${s.num}); closeAbsenteeModal();"
+              class="px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs"
+            >
+              檢視
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+}
+
+function exportCurrentAbsenteeExcel() {
+  if (typeof XLSX === 'undefined') {
+    showToast('⚠️ SheetJS 程式庫尚未載入完成！', 'error');
+    return;
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  if (currentAbsenteeTab === 'weekly') {
+    const dateSelect = document.getElementById('modal-date-select');
+    const targetDate = dateSelect ? dateSelect.value : currentDate;
+    const list = getWeeklyAbsentList(targetDate);
+
+    const rows = [
+      [`南投縣立南投國民中學 115學年度 社團點名缺席名單 -【${formatRocDate(targetDate)}】`],
+      [`統計時間: ${new Date().toLocaleString()}  固定每週二第7節與第8節點名  缺席總計: ${list.length} 人`],
+      ['項次', '活動日期', '社團名稱', '指導教師', '班級', '座號', '學生姓名', '性別', '缺席第7節', '缺席第8節', '違規/課堂備註']
+    ];
+
+    list.forEach((item, idx) => {
+      const s = item.student;
+      rows.push([
+        idx + 1,
+        item.date,
+        item.clubName,
+        item.teacher || '',
+        s.class,
+        s.seat,
+        s.name + (s.isGifted ? ' [資優生]' : '') + (s.role ? ` (${s.role})` : ''),
+        s.gender || '',
+        item.p7 === 'X' ? '缺席' : (item.p7 === '免' ? '免出席' : '出席'),
+        item.p8 === 'X' ? '缺席' : '出席',
+        item.note || ''
+      ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+      { wch: 6 },
+      { wch: 12 },
+      { wch: 16 },
+      { wch: 12 },
+      { wch: 8 },
+      { wch: 6 },
+      { wch: 16 },
+      { wch: 6 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 30 }
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, '本週缺席名單');
+    const fileName = `南投國中115社團點名_缺席名單_${targetDate}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    showToast(`📥 已成功匯出本週缺席 Excel：${fileName}`, 'success');
+
+  } else {
+    const list = getAllSemesterAbsentList();
+
+    const rows = [
+      [`南投縣立南投國民中學 115學年度 第一學期 全校社團活動全期累計缺席總名冊`],
+      [`統計時間: ${new Date().toLocaleString()}  社團總數: 13 社  全期累計缺席人次: ${list.length} 次`],
+      ['項次', '活動日期', '社團名稱', '指導教師', '班級', '座號', '學生姓名', '性別', '缺席節次', '個人累計缺席次數', '違規/課堂備註']
+    ];
+
+    list.forEach((item, idx) => {
+      const s = item.student;
+      rows.push([
+        idx + 1,
+        item.date,
+        item.clubName,
+        item.teacher || '',
+        s.class,
+        s.seat,
+        s.name + (s.isGifted ? ' [資優生]' : '') + (s.role ? ` (${s.role})` : ''),
+        s.gender || '',
+        (item.p7 === 'X' && item.p8 === 'X') ? '第7,8節均缺' : (item.p7 === 'X' ? '第7節缺席' : '第8節缺席'),
+        item.cumulativeCount,
+        item.note || ''
+      ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+      { wch: 6 },
+      { wch: 12 },
+      { wch: 16 },
+      { wch: 12 },
+      { wch: 8 },
+      { wch: 6 },
+      { wch: 16 },
+      { wch: 6 },
+      { wch: 14 },
+      { wch: 16 },
+      { wch: 30 }
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, '全期累計缺席名冊');
+    const fileName = `南投國中115社團點名_全期缺席總名冊_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    showToast(`📥 已成功匯出全期缺席總名冊 Excel：${fileName}`, 'success');
+  }
+}
+
+function exportCurrentAbsenteeCsv() {
+  let csv = '\uFEFF';
+
+  if (currentAbsenteeTab === 'weekly') {
+    const dateSelect = document.getElementById('modal-date-select');
+    const targetDate = dateSelect ? dateSelect.value : currentDate;
+    const list = getWeeklyAbsentList(targetDate);
+
+    csv += `南投縣立南投國民中學 115學年度 社團點名每週缺席名單\n`;
+    csv += `活動日期: ${targetDate},時間: 週二第7-8節,缺席總人數: ${list.length}\n`;
+    csv += `項次,活動日期,社團名稱,指導教師,班級,座號,學生姓名,性別,缺席第7節,缺席第8節,違規備註\n`;
+
+    list.forEach((item, idx) => {
+      const s = item.student;
+      const row = [
+        idx + 1,
+        `"${item.date}"`,
+        `"${item.clubName}"`,
+        `"${item.teacher || ''}"`,
+        `"${s.class}"`,
+        `"${s.seat}"`,
+        `"${s.name}"`,
+        `"${s.gender || ''}"`,
+        `"${item.p7 === 'X' ? '缺席' : (item.p7 === '免' ? '免出席' : '出席')}"`,
+        `"${item.p8 === 'X' ? '缺席' : '出席'}"`,
+        `"${item.note || ''}"`
+      ];
+      csv += row.join(',') + '\n';
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `南投國中社團點名_每週缺席名單_${targetDate}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📥 已成功匯出缺席名單 CSV 檔案！', 'success');
+
+  } else {
+    const list = getAllSemesterAbsentList();
+
+    csv += `南投縣立南投國民中學 115學年度 第一學期 各社團全期累計缺席總名冊\n`;
+    csv += `統計範圍: 全學期週二社團活動,累計缺席人次: ${list.length}\n`;
+    csv += `項次,活動日期,社團名稱,指導教師,班級,座號,學生姓名,性別,缺席節次,個人累計缺席次數,違規備註\n`;
+
+    list.forEach((item, idx) => {
+      const s = item.student;
+      const row = [
+        idx + 1,
+        `"${item.date}"`,
+        `"${item.clubName}"`,
+        `"${item.teacher || ''}"`,
+        `"${s.class}"`,
+        `"${s.seat}"`,
+        `"${s.name}"`,
+        `"${s.gender || ''}"`,
+        `"${(item.p7 === 'X' && item.p8 === 'X') ? '第7,8節均缺' : (item.p7 === 'X' ? '第7節缺席' : '第8節缺席')}"`,
+        `"${item.cumulativeCount}"`,
+        `"${item.note || ''}"`
+      ];
+      csv += row.join(',') + '\n';
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `南投國中社團點名_全期累計缺席總名冊_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📥 已成功匯出全期缺席總名冊 CSV 檔案！', 'success');
+  }
+}
+
+function printCurrentAbsenteeList() {
+  const printTitleEl = document.getElementById('print-school-title');
+  const printClubEl = document.getElementById('print-club-info');
+  const printTableBody = document.getElementById('print-table-body');
+  if (!printTitleEl || !printClubEl || !printTableBody) {
+    window.print();
+    return;
+  }
+
+  if (currentAbsenteeTab === 'weekly') {
+    const dateSelect = document.getElementById('modal-date-select');
+    const targetDate = dateSelect ? dateSelect.value : currentDate;
+    const list = getWeeklyAbsentList(targetDate);
+
+    printTitleEl.textContent = `南投縣立南投國民中學 115學年度 社團點名【缺席名單】統計表`;
+    printClubEl.innerHTML = `
+      <div><strong>統計時段：</strong>${formatRocDate(targetDate)} (固定每週二第7節與第8節)</div>
+      <div><strong>全校缺席人數：</strong>${list.length} 人</div>
+      <div><strong>列印時間：</strong>${new Date().toLocaleString()}</div>
+    `;
+
+    if (list.length === 0) {
+      printTableBody.innerHTML = `
+        <tr>
+          <td colspan="8" style="padding: 24px; text-align: center; color: #16a34a; font-weight: bold;">
+            太棒了！本週全校 13 社團全員出席，零缺席！
+          </td>
+        </tr>
+      `;
+    } else {
+      printTableBody.innerHTML = list.map((item, idx) => {
+        const s = item.student;
+        return `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${s.class}</td>
+            <td>${s.seat}</td>
+            <td style="font-weight: bold; text-align: left; padding-left: 8px;">
+              ${s.name} <span style="font-size: 8pt; color: #2563eb;">[${item.clubName}]</span>
+            </td>
+            <td>${s.gender || ''}</td>
+            <td style="font-size: 11pt; font-weight: bold; color: ${item.p7 === 'X' ? '#dc2626' : '#16a34a'};">${item.p7 || 'O'}</td>
+            <td style="font-size: 11pt; font-weight: bold; color: ${item.p8 === 'X' ? '#dc2626' : '#16a34a'};">${item.p8 || 'O'}</td>
+            <td style="text-align: left; padding-left: 6px; font-size: 8.5pt;">${item.note || ''}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+  } else {
+    const list = getAllSemesterAbsentList();
+    printTitleEl.textContent = `南投縣立南投國民中學 115學年度 第一學期 全校社團【全期累計缺席總名冊】`;
+    printClubEl.innerHTML = `
+      <div><strong>統計範圍：</strong>115學年度第一學期 各週二社團活動</div>
+      <div><strong>全期累計缺席人次：</strong>${list.length} 人次</div>
+      <div><strong>列印時間：</strong>${new Date().toLocaleString()}</div>
+    `;
+
+    if (list.length === 0) {
+      printTableBody.innerHTML = `
+        <tr>
+          <td colspan="8" style="padding: 24px; text-align: center; color: #16a34a; font-weight: bold;">
+            全學期各社團均全員出席，尚無任何缺席紀錄！
+          </td>
+        </tr>
+      `;
+    } else {
+      printTableBody.innerHTML = list.map((item, idx) => {
+        const s = item.student;
+        return `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${s.class}</td>
+            <td>${s.seat}</td>
+            <td style="font-weight: bold; text-align: left; padding-left: 8px;">
+              ${s.name} <span style="font-size: 8pt; color: #2563eb;">[${item.clubName}·${formatShortRoc(item.date)}]</span>
+            </td>
+            <td>${s.gender || ''}</td>
+            <td style="font-size: 11pt; font-weight: bold; color: #dc2626;">${item.p7}</td>
+            <td style="font-size: 11pt; font-weight: bold; color: #dc2626;">${item.p8}</td>
+            <td style="text-align: left; padding-left: 6px; font-size: 8.5pt;">(累計${item.cumulativeCount}次) ${item.note || ''}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  window.print();
 }
