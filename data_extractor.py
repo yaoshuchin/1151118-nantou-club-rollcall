@@ -120,6 +120,11 @@ for sname in target_sheets:
         seat_str = str(seat).strip() if seat is not None else ''
         gender_str = str(gender).strip() if gender is not None else ''
         
+        # 排除已轉學學生：702班4號 張芸瑄 (國樂社)
+        if name_str == '張芸瑄' and cls_str in ['702', '102'] and seat_str == '4':
+            print(f"  [排除轉學生] 702班4號 張芸瑄 已成功自 {disp_name} 移除！")
+            continue
+        
         # Check gifted status
         # 201陳揚宗跟204陳紅妘是資優鑑定生不用上第7節註記上去，不用出席
         is_gifted = False
@@ -168,7 +173,7 @@ for sname in target_sheets:
             }
             
         students.append({
-            'num': num if num is not None else len(students) + 1,
+            'num': len(students) + 1,
             'class': cls_str,
             'seat': seat_str,
             'name': name_str,
@@ -206,7 +211,14 @@ output_data = {
 with open('data/clubs_data.json', 'w', encoding='utf-8') as f:
     json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-print('Successfully updated data/clubs_data.json!')
+with open('js/initial_data.js', 'w', encoding='utf-8') as f:
+    f.write('const INITIAL_CLUBS_DATA = ')
+    json.dump(output_data, f, ensure_ascii=False, indent=2)
+    f.write(';\n')
+
+print('Successfully updated data/clubs_data.json and js/initial_data.js!')
+total_students = sum(c['studentCount'] for c in clubs)
+print(f'Total clubs: {len(clubs)}, Total students: {total_students}')
 for c in clubs:
     for s in c['students']:
         if s.get('isGifted'):

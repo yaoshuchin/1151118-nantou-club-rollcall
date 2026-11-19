@@ -12,8 +12,8 @@
 // ==========================================
 const AUTH_KEY = 'nantou_club_auth_token_115';
 const PASSWORD_CORRECT = 'nato';
-// 更新至 v2 確保自動載入最新資優生註記與二元點名模式
-const STORAGE_KEY = 'nantou_clubs_database_115_v2';
+// 更新至 v3 確保轉學生 (702班4號 張芸瑄) 資料完整清除，並保留其他社團最新點名紀錄
+const STORAGE_KEY = 'nantou_clubs_database_115_v3';
 
 // 點名分類：主要為出席與缺席，資優生第7節為免出席
 const STATUS_CYCLE_NORMAL = ['O', 'X'];
@@ -111,13 +111,20 @@ function logout() {
 // ==========================================
 function loadData() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = localStorage.getItem(STORAGE_KEY);
+    // 自動相容與平滑遷移舊版 LocalStorage 快取 (v2)
+    if (!saved) {
+      saved = localStorage.getItem('nantou_clubs_database_115_v2');
+    }
+
     if (saved) {
       appData = JSON.parse(saved);
-      // Double check gifted students annotations
+      removeTransferredStudents();
       ensureGiftedAnnotations();
+      saveData();
     } else if (typeof INITIAL_CLUBS_DATA !== 'undefined') {
       appData = JSON.parse(JSON.stringify(INITIAL_CLUBS_DATA));
+      removeTransferredStudents();
       ensureGiftedAnnotations();
       saveData();
     } else {
@@ -127,6 +134,7 @@ function loadData() {
     console.error('Error loading data:', e);
     if (typeof INITIAL_CLUBS_DATA !== 'undefined') {
       appData = JSON.parse(JSON.stringify(INITIAL_CLUBS_DATA));
+      removeTransferredStudents();
       ensureGiftedAnnotations();
     }
   }
@@ -138,6 +146,32 @@ function loadData() {
       currentDate = appData.tuesdayDates[0];
     }
   }
+}
+
+/**
+ * 確保已轉學學生（702班4號 張芸瑄）自社團資料中完整刪除並重新排序號次
+ */
+function removeTransferredStudents() {
+  if (!appData || !appData.clubs) return false;
+  let modified = false;
+
+  appData.clubs.forEach(club => {
+    const initialLen = club.students.length;
+    club.students = club.students.filter(s => {
+      const isTransferred = (s.name === '張芸瑄' && (s.class === '702' || s.class === '102') && String(s.seat) === '4');
+      return !isTransferred;
+    });
+
+    if (club.students.length !== initialLen) {
+      modified = true;
+      club.studentCount = club.students.length;
+      club.students.forEach((s, idx) => {
+        s.num = idx + 1;
+      });
+    }
+  });
+
+  return modified;
 }
 
 /**
@@ -200,6 +234,7 @@ function resetToDefault() {
   if (confirm('⚠️ 警告：確定要將所有社團點名資料「重置回原始匯入狀態」嗎？\n所有自訂點名紀錄與修改將會被覆蓋！')) {
     if (typeof INITIAL_CLUBS_DATA !== 'undefined') {
       appData = JSON.parse(JSON.stringify(INITIAL_CLUBS_DATA));
+      removeTransferredStudents();
       ensureGiftedAnnotations();
       saveData();
       renderApp();
